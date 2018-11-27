@@ -794,7 +794,8 @@ public class MHN_AI {
         return resultDirectShoots;
     }
 
-    private DirectShoot findTheBestDirectShoot(List<DirectShoot> input) {
+    protected static DirectShoot findTheBestDirectShoot(List<DirectShoot> input) {
+        //TODO--> THIS METHOD DOES WRONG WHEN THE ANGLES ARE AROUND 0 OR 360
         double min = Double.MAX_VALUE;
         DirectShoot minP = null;
         double temp;

@@ -75,6 +75,14 @@ public class OwnGoal {
         }
     }
 
+    public boolean isItPossible() {
+        return strikerPlayerDirectShoots.size() != 0;
+    }
+
+    public DirectShoot getTheBestStrikerPlayersDirectShoots() {
+        return MHN_AI.findTheBestDirectShoot(strikerPlayerDirectShoots);
+    }
+
     private boolean isTheWayCleanForPlayerToPoint(Player player, Position position) {
         Position checkingPosition;
         for (int i = 0; i < MHN_AI.PLAYERS_COUNT_IN_EACH_TEAM; i++) {
