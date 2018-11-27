@@ -260,40 +260,7 @@ public class MHN_AI {
     }
 
     private boolean canDefence() { //THE SAME 'PARK THE BUS'
-        List<Double> ballAngles = calculateTheAnglesOfBallWithRespectToTheGoalForTeam(game.getOppTeam());
-        List<DirectShoot> directShoots = new ArrayList<>();
-        for (Double ballAngle : ballAngles)
-            directShoots.addAll(whichPlayersCanStrikeThisDirectly(ballAngle, game.getOppTeam()));
-        if (directShoots.size() == 0) {
-            Player playerWithWorstPosition = findThePlayerWithWorstPosition(game.getMyTeam());
-            Position finalPosition = new Position(TARGET_LEFT_X, 0);
-            double angle = calculateTheAngleFromTo(playerWithWorstPosition.getPosition(), finalPosition);
-            if (!isTheWayClean(playerWithWorstPosition.getPosition(), finalPosition, ball.getPosition(), MINIMUM_COLLISION_DISTANCE_FOR_BALL_AND_PLAYER_FROM_CENTER)) {
-                System.out.println("NOT ABLE TO DEFEND!");
-                return false;
-            }
-            act.setAngle((int) Math.round(angle));
-            act.setPower(50);
-            act.setPlayerID(playerWithWorstPosition.getId());
-        }
-        List<DirectShoot> directShootsDefence = whichPlayerCanDefendDirectly(game.getMyTeam());
-        if (directShootsDefence.size() == 0) {
-            List<IndirectStrike> indirectStrikes = whichPlayersCanDefendIndirectly(game.getMyTeam());
-            if (indirectStrikes.size() == 0) {
-                System.out.println("THERE IS NO PLAYER THAT CAN DEFEND INDIRECTLY!");
-                return false;
-            }
-            IndirectStrike indirectStrike = findTheBestIndirectStrike(indirectStrikes); //CHOOSER METHOD
-            act.setPlayerID(indirectStrike.getPlayer().getId());
-            act.setPower(100);
-            act.setAngle((int) Math.round(indirectStrike.getPlayerShootAngle()));
-            return true;
-        }
-        DirectShoot directShoot = findTheNearestPlayerToTheBall(directShootsDefence);
-        act.setPlayerID(directShoot.getPlayer().getId());
-        act.setPower(100);
-        act.setAngle((int) Math.round(directShoot.getPlayerShootAngle()));
-        return true;
+        return false;
     }
 
     private void removeSimilar(List<Integer> source, List<Integer> from) {
