@@ -14,6 +14,7 @@ public class DirectShoot {
     private double distanceToBall = -1f;
     private double digressionAngle = -1d;
     private Position playerStrikePoint;
+    private Player ballPlayer;
 
 
     public DirectShoot(Player player, double playerShootAngle) {
@@ -25,6 +26,13 @@ public class DirectShoot {
         this.player = player;
         this.playerShootAngle = playerShootAngle;
         this.ballShootAngle = ballShootAngle;
+    }
+
+    public DirectShoot(Player player, Player ballPlayer, double playerShootAngle, double ballShootAngle) {
+        this.player = player;
+        this.playerShootAngle = playerShootAngle;
+        this.ballShootAngle = ballShootAngle;
+        this.ballPlayer = ballPlayer;
     }
 
     public DirectShoot(Player player, double playerShootAngle, double ballShootAngle, Team team) {
@@ -120,6 +128,15 @@ public class DirectShoot {
 
     public Team getTeam() {
         return team;
+    }
+
+    public Player getBallPlayer() {
+        return ballPlayer;
+    }
+
+    public DirectShoot setBallPlayer(Player ballPlayer) {
+        this.ballPlayer = ballPlayer;
+        return this;
     }
 
     public DirectShoot setTeam(Team team) {
