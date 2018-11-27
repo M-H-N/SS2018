@@ -36,10 +36,11 @@ public class MHN_AI {
     protected static final float MINIMUM_COLLISION_DISTANCE_FOR_2_PLAYERS = PLAYER_DIAMETER;
 
     //TODO--> THESE ARE WHAT I NEED TO DO:
-    //TODO-->           1-REMOVE INDIRECT STRIKE FROM TAKING THE BALL AWAY
+    //TODO-->(DONE)           1-REMOVE INDIRECT STRIKE FROM TAKING THE BALL AWAY
     //TODO-->           2-ADD SUPER DEFENCE
     //TODO-->           3-MODIFY PARK THE BUS
     //TODO-->           4-CHANGE THE FORMATION TO ONE THAT CAN GOAL AT THE FIRST SHOOT
+    //TODO-->           5-CAN THE ENEMY PLAYER GOAL FOR ME! (O.G)
 
     public MHN_AI(Triple act, Game game) {
         this.act = act;
@@ -223,27 +224,27 @@ public class MHN_AI {
             if (directShoots.size() > 0)
                 break;
         }
-        if (directShoots.size() == 0) {
-            List<IndirectStrike> indirectStrikes = new ArrayList<>();
-            for (int i = 0, j = 359; i < 60; i++, j--) {
-//                System.out.println("CHECKING TAKING THE BALL AWAY INDIRECTLY FOR ANGLE: " + i + " AND " + j);
-                indirectStrikes = whichPlayersCanStrikeThisIndirectly(i, game.getMyTeam());
-                indirectStrikes.addAll(whichPlayersCanStrikeThisIndirectly(j, game.getMyTeam()));
-                if (indirectStrikes.size() > 0)
-                    break;
-            }
-            if (indirectStrikes.size() == 0) {
-                System.out.println("CANNOT TAKE THE BALL AWAY BECAUSE THERE IS NO PLAYER TO SHOOT IT OUT!");
-                return false;
-            }
-            System.out.println("ALL INDIRECT SHOTS FOR TAKING THE BALL AWAY :\n");
-            for (IndirectStrike indirectStrike1 : indirectStrikes) System.out.println(indirectStrike1.toString());
-            IndirectStrike indirectStrike = findTheBestIndirectStrike(indirectStrikes); //CHOOSER METHOD
-            playerAngle = (int) Math.round(indirectStrike.getPlayerShootAngle());
-            playerId = indirectStrike.getPlayer().getId();
-            System.out.println("SELECTED INDIRECT SHOOT FOR TAKING THE BALL AWAY :\n" + indirectStrike.toString());
-
-
+        if (directShoots.size() == 0) {  //If there is no player to take the ball away directly
+//            List<IndirectStrike> indirectStrikes = new ArrayList<>();
+//            for (int i = 0, j = 359; i < 60; i++, j--) {
+////                System.out.println("CHECKING TAKING THE BALL AWAY INDIRECTLY FOR ANGLE: " + i + " AND " + j);
+//                indirectStrikes = whichPlayersCanStrikeThisIndirectly(i, game.getMyTeam());
+//                indirectStrikes.addAll(whichPlayersCanStrikeThisIndirectly(j, game.getMyTeam()));
+//                if (indirectStrikes.size() > 0)
+//                    break;
+//            }
+//            if (indirectStrikes.size() == 0) {
+//                System.out.println("CANNOT TAKE THE BALL AWAY BECAUSE THERE IS NO PLAYER TO SHOOT IT OUT!");
+//                return false;
+//            }
+//            System.out.println("ALL INDIRECT SHOTS FOR TAKING THE BALL AWAY :\n");
+//            for (IndirectStrike indirectStrike1 : indirectStrikes) System.out.println(indirectStrike1.toString());
+//            IndirectStrike indirectStrike = findTheBestIndirectStrike(indirectStrikes); //CHOOSER METHOD
+//            playerAngle = (int) Math.round(indirectStrike.getPlayerShootAngle());
+//            playerId = indirectStrike.getPlayer().getId();
+//            System.out.println("SELECTED INDIRECT SHOOT FOR TAKING THE BALL AWAY :\n" + indirectStrike.toString());
+            System.out.println("THERE IS NOT PLAYER TO TAKE THE BALL AWAY DIRECTLY!");
+            return false;
         } else {
             System.out.println("ALL DIRECT SHOOTS FOR TAKING THE BALL AWAY:");
             for (DirectShoot directShoot1 : directShoots) System.out.println(directShoot1.toString());
@@ -258,7 +259,7 @@ public class MHN_AI {
         return true;
     }
 
-    private boolean canDefence() {
+    private boolean canDefence() { //THE SAME 'PARK THE BUS'
         List<Double> ballAngles = calculateTheAnglesOfBallWithRespectToTheGoalForTeam(game.getOppTeam());
         List<DirectShoot> directShoots = new ArrayList<>();
         for (Double ballAngle : ballAngles)
