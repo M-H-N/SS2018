@@ -50,12 +50,46 @@ public class OwnGoal {
     private void calculateAllStrikerPlayerDirectShoots() {
         DirectShoot directShoot;
         for (int i = 0; i < playerDirectShoots.size(); i++) {
-            directShoot = calculateThePlayerToPlayerDirectShoot(playerDirectShoots.get(i).getPlayer()
-                    , playerDirectShoots.get(i).getBallPlayer()
-                    , playerDirectShoots.get(i).getBallShootAngle());
-            if (directShoot.getPlayerShootAngle() != MHN_AI.FAILED_CODE)
-                strikerPlayerDirectShoots.add(directShoot);
+            for (int j = 0; j < MHN_AI.PLAYERS_COUNT_IN_EACH_TEAM; j++) {
+                directShoot = calculateThePlayerToPlayerDirectShoot(
+                        game.getMyTeam().getPlayer(j), //StrikerPlayer (that hits the player)
+                        player, //Player (that hits the ball)
+                        playerDirectShoots.get(i).getPlayerShootAngle()); //Player (that hits the ball) Shoot Angle
+                if (directShoot.getPlayerShootAngle() != MHN_AI.FAILED_CODE)
+                    strikerPlayerDirectShoots.add(directShoot);
+            }
         }
+    }
+
+    private void filterPlayerDirectShoots() {
+        for (int i = 0; i < playerDirectShoots.size(); i++) {
+            if (!isTheWayCleanForPlayerToPoint(player, playerDirectShoots.get(i).getPlayerStrikePoint()))
+                playerDirectShoots.remove(i);
+        }
+    }
+
+    private void filterStrikerPlayerDirectShoots() {
+        for (int i = 0; i < MHN_AI.PLAYERS_COUNT_IN_EACH_TEAM; i++) {
+            if (!isTheWayCleanForPlayerToPoint(strikerPlayerDirectShoots.get(i).getPlayer(), strikerPlayerDirectShoots.get(i).getPlayerStrikePoint()))
+                strikerPlayerDirectShoots.remove(i);
+        }
+    }
+
+    private boolean isTheWayCleanForPlayerToPoint(Player player, Position position) {
+        Position checkingPosition;
+        for (int i = 0; i < MHN_AI.PLAYERS_COUNT_IN_EACH_TEAM; i++) {
+            if (player != game.getMyTeam().getPlayer(i)) {
+                checkingPosition = game.getMyTeam().getPlayer(i).getPosition();
+                if (!MHN_AI.isTheWayClean(player.getPosition(), position, checkingPosition, MHN_AI.MINIMUM_COLLISION_DISTANCE_FOR_2_PLAYERS))
+                    return false;
+            }
+            if (player != game.getOppTeam().getPlayer(i)) {
+                checkingPosition = game.getOppTeam().getPlayer(i).getPosition();
+                if (!MHN_AI.isTheWayClean(player.getPosition(), position, checkingPosition, MHN_AI.MINIMUM_COLLISION_DISTANCE_FOR_2_PLAYERS))
+                    return false;
+            }
+        }
+        return true;
     }
 
     protected static DirectShoot calculateThePlayerToPlayerDirectShoot(Player strikerPlayer, Player player, double playerShootAngle) {
@@ -68,14 +102,14 @@ public class OwnGoal {
         if (playerShootAngle > 180 && strikerPlayer.getPosition().getY() < player.getPosition().getY())
             return new DirectShoot(player, MHN_AI.FAILED_CODE, playerShootAngle);
 
-        Position strikerPlayerStrikePoint = calculateTheExcpectedStrikePlayerStrikePoint(player, playerShootAngle);
+        Position strikerPlayerStrikePoint = calculateTheExpectedStrikePlayerStrikePoint(player, playerShootAngle);
         final double strikerPlayerShootAngle = MHN_AI.calculateTheAngleFromTo(strikerPlayer.getPosition(), strikerPlayerStrikePoint);
         if (strikerPlayerShootAngle >= 90 && strikerPlayerShootAngle <= 270 && (playerShootAngle < 90 || playerShootAngle > 270))
             return new DirectShoot(player, MHN_AI.FAILED_CODE, playerShootAngle);
         return new DirectShoot(strikerPlayer, player, strikerPlayerShootAngle, playerShootAngle);
     }
 
-    protected static Position calculateTheExcpectedStrikePlayerStrikePoint(Player player, double playerShootAngle) {
+    protected static Position calculateTheExpectedStrikePlayerStrikePoint(Player player, double playerShootAngle) {
         double xPos = player.getPosition().getX() - (Math.cos(Math.toRadians(playerShootAngle)) * MHN_AI.MINIMUM_COLLISION_DISTANCE_FOR_2_PLAYERS);
         double yPos = player.getPosition().getY() - (Math.sin(Math.toRadians(playerShootAngle)) * MHN_AI.MINIMUM_COLLISION_DISTANCE_FOR_2_PLAYERS);
         return new Position(xPos, yPos);

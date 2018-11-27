@@ -49,6 +49,15 @@ public class DirectShoot {
         this.playerStrikePoint = playerStrikePoint;
     }
 
+
+//    public DirectShoot(Player player, double playerShootAngle, double ballShootAngle, Position playerStrikePoint, double playerShootAngle) {
+//        this.player = player;
+//        this.playerShootAngle = playerShootAngle;
+//        this.ballShootAngle = ballShootAngle;
+//        this.playerStrikePoint = playerStrikePoint;
+//        this.playerShootAngle = playerShootAngle;
+//    }
+
     public void calculateRate(Ball ball) {
         calculateDigressionAngle(ball);
         calculateDistanceToBall(ball);
