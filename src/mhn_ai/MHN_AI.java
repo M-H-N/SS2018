@@ -73,6 +73,11 @@ public class MHN_AI {
             return;
         }
         System.out.println("CAN NOT MAKE AN INDIRECT GOAL!");
+        if (canMakeAnOwnGoal()) {
+            System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!CAN-MAKE-AN-OWN-GOAL!!!!!!!!!!!!!!!!!!!!!!!!");
+            return;
+        }
+        System.out.println("CAN NOT MAKE AN OWN GOAL!");
         if (canTakeTheBallAwayFromTarget()) {
             System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!CAN-TAKE-THE-BALL-AWAY-FROM-TARGET!!!!!!!!!!!!!!!!!!!!!!!!");
             return;
@@ -211,6 +216,11 @@ public class MHN_AI {
         act.setPower(power);
         act.setAngle(playerShootAngle);
         return true;
+    }
+
+    private boolean canMakeAnOwnGoal() {
+        //TODO--> DEVELOP THIS METHOD (USING THE 'OwnGoal' CLASS)
+        return false;
     }
 
     private boolean canTakeTheBallAwayFromTarget() {

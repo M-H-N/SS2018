@@ -16,14 +16,6 @@ public class OwnGoal {
     private List<DirectShoot> playerDirectShoots = new ArrayList<>();
     private List<DirectShoot> strikerPlayerDirectShoots = new ArrayList<>();
 
-
-    //This Class Gets a list of averaged ball angles 'ballAnglesAvg' and a player
-    //Calculates a list of 'playerStrikePositions' to hit the ball and goal
-    //Calculates a list of 'playerShootAngles' to hit the ball in the 'playerStrikePoints'
-    //Checks for each 'playerShootAngles' that if the way of player to the ball is clean
-    //Calculates the 'strikerPlayerStrikePoints' to hit the player and the player hit the ball and goal
-    //Checks for each of my team players that if the way of checking player to the 'playerStrikerStrikePoint' is clean
-
     ////<<NOTE: EACH OBJECT OF THIS CLASS IS ABOUT ONLY ONE OF THE ENEMY'S PLAYERS>>
 
     public OwnGoal(Ball ball, Game game, Player player, List<Double> ballAnglesAvg) {
