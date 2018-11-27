@@ -13,11 +13,6 @@ public class OwnGoal {
     private final Game game;
     private final Player player;
     private final List<Double> ballAnglesAvg;
-    private List<Double> playerShootAngles;
-    private double strikerPlayerShootAngle;
-    private Player strikerPlayer;
-    private List<Position> strikerPlayerStrikePoints;
-    private List<Position> playerStrikePoints = new ArrayList<>();
     private List<DirectShoot> playerDirectShoots = new ArrayList<>();
     private List<DirectShoot> strikerPlayerDirectShoots = new ArrayList<>();
 
@@ -36,6 +31,11 @@ public class OwnGoal {
         this.game = game;
         this.player = player;
         this.ballAnglesAvg = ballAnglesAvg;
+
+        calculateAllPlayerDirectShoots();
+        filterPlayerDirectShoots();
+        calculateAllStrikerPlayerDirectShoots();
+        filterStrikerPlayerDirectShoots();
     }
 
     private void calculateAllPlayerDirectShoots() {
@@ -79,7 +79,7 @@ public class OwnGoal {
         return strikerPlayerDirectShoots.size() != 0;
     }
 
-    public DirectShoot getTheBestStrikerPlayersDirectShoots() {
+    public DirectShoot getTheBestStrikerPlayersDirectShoots() { //returns null if the list is empty, so the method 'isItPossible' must be called!
         return MHN_AI.findTheBestDirectShoot(strikerPlayerDirectShoots);
     }
 
@@ -133,17 +133,5 @@ public class OwnGoal {
 
     public Player getPlayer() {
         return player;
-    }
-
-    public List<Double> getBallAnglesAvg() {
-        return ballAnglesAvg;
-    }
-
-    public List<Double> getPlayerShootAngles() {
-        return playerShootAngles;
-    }
-
-    public Player getStrikerPlayer() {
-        return strikerPlayer;
     }
 }
