@@ -73,11 +73,11 @@ public class MHN_AI {
             return;
         }
         System.out.println("CAN NOT MAKE AN INDIRECT GOAL!");
-        if (canMakeAnOwnGoal()) {
-            System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!CAN-MAKE-AN-OWN-GOAL!!!!!!!!!!!!!!!!!!!!!!!!");
-            return;
-        }
-        System.out.println("CAN NOT MAKE AN OWN GOAL!");
+//        if (canMakeAnOwnGoal()) {
+//            System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!CAN-MAKE-AN-OWN-GOAL!!!!!!!!!!!!!!!!!!!!!!!!");
+//            return;
+//        }
+//        System.out.println("CAN NOT MAKE AN OWN GOAL!");
         if (canTakeTheBallAwayFromTarget()) {
             System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!CAN-TAKE-THE-BALL-AWAY-FROM-TARGET!!!!!!!!!!!!!!!!!!!!!!!!");
             return;
@@ -122,7 +122,7 @@ public class MHN_AI {
                 indirectStrikes.addAll(whichPlayersCanStrikeThisIndirectly(anglesToGoal.get(i), game.getMyTeam()));
             if (indirectStrikes.size() == 0) {
                 System.out.println("***********************************CANNOT MAKE A DIRECT GOAL BY AN INDIRECT STRIKE BECAUSE THERE IS NO PLAYER TO SHOOT IT OUT!");
-                return false;
+                return canMakeAnOwnGoal(anglesToGoal);
             }
             IndirectStrike chosenIndirectStrike = findTheBestIndirectStrike(indirectStrikes); //CHOOSER METHOD
             playerId = chosenIndirectStrike.getPlayer().getId();
@@ -218,8 +218,19 @@ public class MHN_AI {
         return true;
     }
 
-    private boolean canMakeAnOwnGoal() {
-        //TODO--> DEVELOP THIS METHOD (USING THE 'OwnGoal' CLASS)
+    private boolean canMakeAnOwnGoal(List<Double> ballShootAngles) {
+        ballShootAngles = averageSequences(ballShootAngles);
+        OwnGoal ownGoal;
+        for (int i = 0; i < PLAYERS_COUNT_IN_EACH_TEAM; i++) {
+            ownGoal = new OwnGoal(ball, game, game.getOppTeam().getPlayer(i), ballShootAngles);
+            if (ownGoal.isItPossible()) {
+                DirectShoot directShoot = ownGoal.getTheBestStrikerPlayersDirectShoots();
+                act.setAngle((int) Math.round(directShoot.getPlayerShootAngle()));
+                act.setPlayerID(directShoot.getPlayer().getId());
+                act.setPower(POWER_MAX);
+                return true;
+            }
+        }
         return false;
     }
 
@@ -805,12 +816,13 @@ public class MHN_AI {
     }
 
     protected static DirectShoot findTheBestDirectShoot(List<DirectShoot> input) {
-        //TODO--> THIS METHOD DOES WRONG WHEN THE ANGLES ARE AROUND 0 OR 360
         double min = Double.MAX_VALUE;
         DirectShoot minP = null;
         double temp;
         for (int i = 0; i < input.size(); i++) {
             temp = Math.abs(input.get(i).getPlayerShootAngle() - input.get(i).getBallShootAngle());
+            if (temp > 180)
+                temp = 360 - temp;
             if (temp < min) {
                 minP = input.get(i);
                 min = temp;

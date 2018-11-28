@@ -54,6 +54,8 @@ public class OwnGoal {
     }
 
     private void filterPlayerDirectShoots() {
+        if (playerDirectShoots.size() == 0)
+            return;
         for (int i = 0; i < playerDirectShoots.size(); i++) {
             if (!isTheWayCleanForPlayerToPoint(player, playerDirectShoots.get(i).getPlayerStrikePoint()))
                 playerDirectShoots.remove(i);
@@ -61,6 +63,8 @@ public class OwnGoal {
     }
 
     private void filterStrikerPlayerDirectShoots() {
+        if (strikerPlayerDirectShoots.size() == 0)
+            return;
         for (int i = 0; i < MHN_AI.PLAYERS_COUNT_IN_EACH_TEAM; i++) {
             if (!isTheWayCleanForPlayerToPoint(strikerPlayerDirectShoots.get(i).getPlayer(), strikerPlayerDirectShoots.get(i).getPlayerStrikePoint()))
                 strikerPlayerDirectShoots.remove(i);
@@ -76,6 +80,7 @@ public class OwnGoal {
     }
 
     private boolean isTheWayCleanForPlayerToPoint(Player player, Position position) {
+        //TODO==> THROWS NULL POINTER EXCEPTION
         Position checkingPosition;
         for (int i = 0; i < MHN_AI.PLAYERS_COUNT_IN_EACH_TEAM; i++) {
             if (player != game.getMyTeam().getPlayer(i)) {
