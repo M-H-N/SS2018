@@ -228,9 +228,11 @@ public class MHN_AI {
                 act.setAngle((int) Math.round(directShoot.getPlayerShootAngle()));
                 act.setPlayerID(directShoot.getPlayer().getId());
                 act.setPower(POWER_MAX);
+                System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!<<CAN MAKE A DIRECT OWN GOAL BY A DIRECT STRIKE>>!!!!!!!!!!!!!!!!!!!!!!!!");
                 return true;
             }
         }
+        System.out.println("CAN NOT MAKE AN OWN GOAL BY DIRECT STRIKE!");
         return false;
     }
 
@@ -282,7 +284,6 @@ public class MHN_AI {
 
     private boolean canDefence() { //THE SAME 'PARK THE BUS'
         //TODO--> COMPLETE THIS METHOD
-
         return false;
     }
 
@@ -318,7 +319,7 @@ public class MHN_AI {
         List<DirectShoot> result = new ArrayList<>();
         DirectShoot playerDirectShoot;
         for (int i = 0; i < PLAYERS_COUNT_IN_EACH_TEAM; i++) {
-            playerDirectShoot = calculateTheAngleOfPlayerStrikingTheBallDirectlyForBallAngle(team.getPlayer(i), ballAngle, ball);
+            playerDirectShoot = calculateTheDirectShootOfPlayerStrikingTheBallDirectlyForBallAngle(team.getPlayer(i), ballAngle, ball);
             if (playerDirectShoot.getPlayerShootAngle() == FAILED_CODE) {
 //                System.out.println("&&&&&&&&&&&THE PLAYER(" + i + ") CANNOT SHOOT DIRECTLY BECAUSE THE POSITION IS BAD!");
                 continue;
@@ -414,7 +415,7 @@ public class MHN_AI {
         return false;
     }
 
-    protected static DirectShoot calculateTheAngleOfPlayerStrikingTheBallDirectlyForBallAngle(Player player, double ballAngle, Ball ball) {
+    protected static DirectShoot calculateTheDirectShootOfPlayerStrikingTheBallDirectlyForBallAngle(Player player, double ballAngle, Ball ball) {
 //        System.out.println("CALCULATING THE ANGLE OF PLAYER(ID=" + player.getId() + ") STRIKING DIRECTLY THE BALL FOR BALL ANGLE(" + ballAngle + ")");
         if (ballAngle > 90 && ballAngle < 270 && player.getPosition().getX() < ball.getPosition().getX())
             return new DirectShoot(player, FAILED_CODE, ballAngle);
@@ -427,7 +428,7 @@ public class MHN_AI {
 //        System.out.println("PLAYER POSITION:    " + player.getPosition().toString());
 //        System.out.println("BALL POSITION:      " + ball.getPosition());
 //        System.out.println("BALL ANGLE:         " + ballAngle);
-        Position playerStrikePoint = calculateTheExpectedPlayerStrikePoint(ball, ballAngle); //original
+        final Position playerStrikePoint = calculateTheExpectedPlayerStrikePoint(ball, ballAngle); //original
 //        System.out.println("PLAYER STRIKE POINT: " + playerStrikePoint.toString());
         final double playerShootAngle = calculateTheAngleFromTo(player.getPosition(), playerStrikePoint);
 //        System.out.println("THE FINAL RESULT OF PLAYER(" + player.getId() + ") ANGLE IS:    " + playerShootAngle);

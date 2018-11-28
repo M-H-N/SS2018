@@ -28,11 +28,12 @@ public class DirectShoot {
         this.ballShootAngle = ballShootAngle;
     }
 
-    public DirectShoot(Player player, Player ballPlayer, double playerShootAngle, double ballShootAngle) {
+    public DirectShoot(Player player, Player ballPlayer, double playerShootAngle, double ballShootAngle, Position playerStrikePoint) {
         this.player = player;
         this.playerShootAngle = playerShootAngle;
         this.ballShootAngle = ballShootAngle;
         this.ballPlayer = ballPlayer;
+        this.playerStrikePoint = playerStrikePoint;
     }
 
     public DirectShoot(Player player, double playerShootAngle, double ballShootAngle, Team team) {
