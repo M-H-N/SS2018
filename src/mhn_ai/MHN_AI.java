@@ -34,6 +34,7 @@ public class MHN_AI {
     protected static final float DIRECT_SHOOT_THRESHOLD_ANGLE = 60f;
     protected static final float MINIMUM_COLLISION_DISTANCE_FOR_BALL_AND_PLAYER_FROM_CENTER = (BALL_DIAMETER + PLAYER_DIAMETER) / 2;
     protected static final float MINIMUM_COLLISION_DISTANCE_FOR_2_PLAYERS = PLAYER_DIAMETER;
+    private static final float DISTANCE_PER_100POWER = 15.75f;
 
     //TODO--> THESE ARE WHAT I NEED TO DO:
     //TODO-->(DONE)           1-REMOVE INDIRECT STRIKE FROM TAKING THE BALL AWAY
@@ -284,6 +285,7 @@ public class MHN_AI {
 
     private boolean canDefence() { //THE SAME 'PARK THE BUS'
         //TODO--> COMPLETE THIS METHOD
+
         return false;
     }
 
@@ -869,5 +871,13 @@ public class MHN_AI {
                 angle = 180 - angle;
         }
         return angle;
+    }
+
+    private static double getDistanceByPower(int power) {
+        return (power * DISTANCE_PER_100POWER / 100);
+    }
+
+    private static int getPowerByDistance(double distance) {
+        return (int) Math.round(distance * 100 / DISTANCE_PER_100POWER);
     }
 }
