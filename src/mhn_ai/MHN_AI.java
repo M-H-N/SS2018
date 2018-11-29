@@ -84,9 +84,11 @@ public class MHN_AI {
             return;
         }
         System.out.println("CAN NOT PARK THE BUS!");
-        generateRandomShoot();
-
-
+//        generateRandomShoot();
+        act.setAngle(0);
+        act.setPlayerID(0);
+        act.setPower(0);
+        System.out.println("!DON'T MOVE!");
 //        act.setAngle(45);
 //        act.setPower(100);
 //        act.setPlayerID(0);
@@ -233,7 +235,7 @@ public class MHN_AI {
     }
 
     private boolean canTakeTheBallAwayFromTarget() {
-        if (ball.getPosition().getX() > 0)
+        if (ball.getPosition().getX() > 0 && !canTeamGoalDirectly(game.getOppTeam()))
             return false;
         int power = POWER_MAX, playerAngle, playerId;
         System.out.println("||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||TRYING TO TAKE THE BALL AWAY FROM OUT TARGET||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||");
@@ -278,6 +280,19 @@ public class MHN_AI {
         act.setPower(power);
         act.setPlayerID(playerId);
         return true;
+    }
+
+    private boolean canTeamGoalDirectly(Team team) {
+        List<Double> ballAngles = calculateTheAnglesOfBallWithRespectToTheGoalForTeam(team);
+        List<DirectShoot> directShoots = new ArrayList<>();
+        if (ballAngles.size() == 0)
+            return false;
+        for (int i = 0; i < ballAngles.size(); i++) {
+            directShoots.addAll(whichPlayersCanStrikeThisDirectly(ballAngles.get(i), team));
+            if (directShoots.size() > 0)
+                return true;
+        }
+        return false;
     }
 
     private boolean canParkTheBus() { //THE SAME 'PARK THE BUS'

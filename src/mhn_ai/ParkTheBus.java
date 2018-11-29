@@ -13,7 +13,7 @@ public class ParkTheBus {
     private static final float SCAN_RADIUS_BEGIN = 1.75f;
     private static final float SCAN_RADIUS_END = 4f;
     private static final float SCAN_THRESHOLD_BEGIN = -7f;
-    private static final float SCAN_THRESHOLD_END = -3f;
+    private static final float SCAN_THRESHOLD_END = -5f;
     private final Game game;
     private List<Position> destinations = new ArrayList<>();
     private List<Defence> defences = new ArrayList<>();
