@@ -74,17 +74,12 @@ public class MHN_AI {
             return;
         }
         System.out.println("CAN NOT MAKE AN INDIRECT GOAL!");
-//        if (canMakeAnOwnGoal()) {
-//            System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!CAN-MAKE-AN-OWN-GOAL!!!!!!!!!!!!!!!!!!!!!!!!");
-//            return;
-//        }
-//        System.out.println("CAN NOT MAKE AN OWN GOAL!");
         if (canTakeTheBallAwayFromTarget()) {
             System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!CAN-TAKE-THE-BALL-AWAY-FROM-TARGET!!!!!!!!!!!!!!!!!!!!!!!!");
             return;
         }
         System.out.println("CAN NOT TAKE THE BALL AWAY FROM TARGET!");
-        if (canDefence()) {
+        if (canParkTheBus()) {
             System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!CAN-PARK-THE-BUS!!!!!!!!!!!!!!!!!!!!!!!!");
             return;
         }
@@ -238,6 +233,8 @@ public class MHN_AI {
     }
 
     private boolean canTakeTheBallAwayFromTarget() {
+        if (ball.getPosition().getX() > 0)
+            return false;
         int power = POWER_MAX, playerAngle, playerId;
         System.out.println("||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||TRYING TO TAKE THE BALL AWAY FROM OUT TARGET||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||");
         List<DirectShoot> directShoots = new ArrayList<>();
@@ -283,10 +280,17 @@ public class MHN_AI {
         return true;
     }
 
-    private boolean canDefence() { //THE SAME 'PARK THE BUS'
+    private boolean canParkTheBus() { //THE SAME 'PARK THE BUS'
         //TODO--> COMPLETE THIS METHOD
-
-        return false;
+        ParkTheBus parkTheBus = new ParkTheBus(game);
+        ParkTheBus.Defence defence = parkTheBus.getBestDefence();
+        if (defence == null)
+            return false;
+        act.setPower(defence.getPlayerShootPower());
+        act.setPlayerID(defence.getPlayer().getId());
+        act.setAngle(defence.getPlayerShootAngleInt());
+        System.out.println(">>>>>>>>>>>>>SELECTED-PARK-THE-BUS:\n" + defence.toString());
+        return true;
     }
 
     private void removeSimilar(List<Integer> source, List<Integer> from) {

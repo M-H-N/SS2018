@@ -13,7 +13,7 @@ public class ParkTheBus {
     private static final float SCAN_RADIUS_BEGIN = 1.75f;
     private static final float SCAN_RADIUS_END = 4f;
     private static final float SCAN_THRESHOLD_BEGIN = -7f;
-    private static final float SCAN_THRESHOLD_END = -4f;
+    private static final float SCAN_THRESHOLD_END = -3f;
     private final Game game;
     private List<Position> destinations = new ArrayList<>();
     private List<Defence> defences = new ArrayList<>();
@@ -70,7 +70,6 @@ public class ParkTheBus {
         return player.getPosition().getX() > SCAN_THRESHOLD_END;
     }
 
-
     private void findFirstHoles() {
         final double topAngle = MHN_AI.calculateTheAngleFromTo(CENTER, TARGET_TOP);
         final double bottomAngle = MHN_AI.calculateTheAngleFromTo(CENTER, TARGET_BOTTOM);
@@ -114,7 +113,21 @@ public class ParkTheBus {
         return defences;
     }
 
-    private class Defence {
+    public Defence getBestDefence() { //Returns null if there are no defences!
+        double min = Double.MAX_VALUE, temp;
+        Defence minDef = null;
+        for (int i = 0; i < defences.size(); i++) {
+            temp = Math.abs(defences.get(i).getDestinationPoint().getX());
+            if (temp < min) {
+                min = temp;
+                minDef = defences.get(i);
+            }
+        }
+        return minDef;
+    }
+
+
+    protected class Defence {
         private final Position destinationPoint;
         private final Player player;
         private double playerShootAngle;
@@ -148,6 +161,10 @@ public class ParkTheBus {
             return playerShootAngle;
         }
 
+        public int getPlayerShootAngleInt() {
+            return (int) Math.round(playerShootAngle);
+        }
+
         public Defence setPlayerShootAngle(double playerShootAngle) {
             this.playerShootAngle = playerShootAngle;
             return this;
@@ -160,6 +177,18 @@ public class ParkTheBus {
         public Defence setPlayerShootPower(int playerShootPower) {
             this.playerShootPower = playerShootPower;
             return this;
+        }
+
+        @Override
+        public String toString() {
+            return String.format("Defence::->\n     DestinationPoint: (%f,%f)\n" +
+                            "     PlayerId: %d\n     PlayerShootAngle: %f\n     PlayerShootPower: %d",
+                    destinationPoint.getX(),
+                    destinationPoint.getY(),
+                    player.getId(),
+                    playerShootAngle,
+                    playerShootPower
+            );
         }
     }
 }
