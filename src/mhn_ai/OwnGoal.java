@@ -18,8 +18,8 @@ public class OwnGoal {
 
     ////<<NOTE: EACH OBJECT OF THIS CLASS IS ABOUT ONLY ONE OF THE ENEMY'S PLAYERS>>
 
-    public OwnGoal(Ball ball, Game game, Player player, List<Double> ballAnglesAvg) {
-        this.ball = ball;
+    public OwnGoal(Game game, Player player, List<Double> ballAnglesAvg) {
+        this.ball = game.getBall();
         this.game = game;
         this.player = player;
         this.ballAnglesAvg = ballAnglesAvg;

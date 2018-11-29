@@ -223,7 +223,7 @@ public class MHN_AI {
         ballShootAngles = averageSequences(ballShootAngles);
         OwnGoal ownGoal;
         for (int i = 0; i < PLAYERS_COUNT_IN_EACH_TEAM; i++) {
-            ownGoal = new OwnGoal(ball, game, game.getOppTeam().getPlayer(i), ballShootAngles);
+            ownGoal = new OwnGoal(game, game.getOppTeam().getPlayer(i), ballShootAngles);
             if (ownGoal.isItPossible()) {
                 DirectShoot directShoot = ownGoal.getTheBestStrikerPlayersDirectShoots();
                 act.setAngle((int) Math.round(directShoot.getPlayerShootAngle()));
@@ -873,11 +873,11 @@ public class MHN_AI {
         return angle;
     }
 
-    private static double getDistanceByPower(int power) {
+    protected static double getDistanceByPower(int power) {
         return (power * DISTANCE_PER_100POWER / 100);
     }
 
-    private static int getPowerByDistance(double distance) {
+    protected static int getPowerByDistance(double distance) {
         return (int) Math.round(distance * 100 / DISTANCE_PER_100POWER);
     }
 }
