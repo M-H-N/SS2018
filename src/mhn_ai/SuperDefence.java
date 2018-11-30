@@ -59,7 +59,7 @@ public class SuperDefence {
         double distanceB = Math.abs(MHN_AI.FIELD_MIN_X - ball.getPosition().getX()) - (MHN_AI.PLAYER_DIAMETER / 2);
         double xWallStrikePoint = MHN_AI.FIELD_MIN_X + (MHN_AI.PLAYER_DIAMETER / 2);
         double yWallStrikePoint = ((player.getPosition().getY() * distanceB) + (ball.getPosition().getY() * distanceA)) / (distanceA + distanceB);
-        if (yWallStrikePoint >= topTargetPosition.getY() || yWallStrikePoint <= bottomTargetPosition.getY()) {
+        if (yWallStrikePoint + (MHN_AI.PLAYER_DIAMETER / 2) >= topTargetPosition.getY() || yWallStrikePoint - (MHN_AI.PLAYER_DIAMETER / 2) <= bottomTargetPosition.getY()) {
             playerWallStrikePoint = new Position(xWallStrikePoint, yWallStrikePoint);
             return;
         }

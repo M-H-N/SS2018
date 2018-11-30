@@ -17,7 +17,8 @@ public class MHN_AI {
     protected static final float BALL_DIAMETER = 0.5f; //ORIGINAL
     //    protected static final float BALL_DIAMETER = 0.6f;
     protected static final float PLAYER_DIAMETER = 1f; //ORIGINAL
-    //    protected static final float PLAYER_DIAMETER = 0.8f;
+    //        protected static final float PLAYER_DIAMETER = 1.2f;
+    //        protected static final float PLAYER_DIAMETER = 1.04f;
     protected static final float INDIRECT_SHOOT_CHECK_STEP = 0.4f;
     protected static final float DIRECT_SHOOT_CHECK_STEP = 0.4f;
     protected static final float TARGET_TOP_Y = 1.4f;
@@ -119,6 +120,7 @@ public class MHN_AI {
                 indirectStrikes.addAll(whichPlayersCanStrikeThisIndirectly(anglesToGoal.get(i), game.getMyTeam()));
             if (indirectStrikes.size() == 0) {
                 System.out.println("***********************************CANNOT MAKE A DIRECT GOAL BY AN INDIRECT STRIKE BECAUSE THERE IS NO PLAYER TO SHOOT IT OUT!");
+                System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!TRYING TO MAKE AN OWN GOAL!!!!!!!!!!!!!!!!!!!!!!!!");
                 return canMakeAnOwnGoal(anglesToGoal);
             }
             IndirectStrike chosenIndirectStrike = findTheBestIndirectStrike(indirectStrikes); //CHOOSER METHOD

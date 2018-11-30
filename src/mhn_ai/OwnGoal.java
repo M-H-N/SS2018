@@ -112,8 +112,8 @@ public class OwnGoal {
     }
 
     protected static Position calculateTheExpectedStrikerPlayerStrikePoint(Player player, double playerShootAngle) {
-        double xPos = player.getPosition().getX() - (Math.cos(Math.toRadians(playerShootAngle)) * MHN_AI.MINIMUM_COLLISION_DISTANCE_FOR_2_PLAYERS);
-        double yPos = player.getPosition().getY() - (Math.sin(Math.toRadians(playerShootAngle)) * MHN_AI.MINIMUM_COLLISION_DISTANCE_FOR_2_PLAYERS);
+        double xPos = player.getPosition().getX() - (Math.cos(Math.toRadians(playerShootAngle)) * MHN_AI.PLAYER_DIAMETER);
+        double yPos = player.getPosition().getY() - (Math.sin(Math.toRadians(playerShootAngle)) * MHN_AI.PLAYER_DIAMETER);
         return new Position(xPos, yPos);
     }
 
