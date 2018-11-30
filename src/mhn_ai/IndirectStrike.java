@@ -5,9 +5,6 @@ import uiai.Game;
 import uiai.Player;
 import uiai.Position;
 
-import javax.print.DocFlavor;
-import java.util.List;
-
 public class IndirectStrike {
     private Ball ball;
     private final double ballAngle;

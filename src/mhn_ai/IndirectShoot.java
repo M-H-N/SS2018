@@ -2,7 +2,6 @@ package mhn_ai;
 
 import uiai.Ball;
 import uiai.Game;
-import uiai.Player;
 import uiai.Position;
 
 public class IndirectShoot {
