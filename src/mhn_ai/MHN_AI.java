@@ -29,12 +29,14 @@ public class MHN_AI {
     protected static final int FIELD_MIN_Y = -4;
     protected static final int FIELD_MAX_Y = 4;
     private static final int DANGER_ZONE_MAX_X = -5;
+    protected static final int EMPTY_CODE = 204;
     protected static final int FAILED_CODE = -1;
     protected static final int PLAYERS_COUNT_IN_EACH_TEAM = 5;
     protected static final float DIRECT_SHOOT_THRESHOLD_ANGLE = 60f;
     protected static final float MINIMUM_COLLISION_DISTANCE_FOR_BALL_AND_PLAYER_FROM_CENTER = (BALL_DIAMETER + PLAYER_DIAMETER) / 2;
     protected static final float MINIMUM_COLLISION_DISTANCE_FOR_2_PLAYERS = PLAYER_DIAMETER;
-    private static final float DISTANCE_PER_100POWER = 15.75f;
+    //    private static final float DISTANCE_PER_100POWER = 15.75f;
+    private static final float DISTANCE_PER_100POWER = 9.183f;
 
     //TODO--> THESE ARE WHAT I NEED TO DO:
     //TODO-->(DONE)           1-REMOVE INDIRECT STRIKE FROM TAKING THE BALL AWAY
@@ -89,9 +91,6 @@ public class MHN_AI {
         act.setPlayerID(0);
         act.setPower(0);
         System.out.println("!DON'T MOVE!");
-//        act.setAngle(45);
-//        act.setPower(100);
-//        act.setPlayerID(0);
     }
 
     private boolean canMakeADirectGoal() {
@@ -267,6 +266,20 @@ public class MHN_AI {
 //            playerId = indirectStrike.getPlayer().getId();
 //            System.out.println("SELECTED INDIRECT SHOOT FOR TAKING THE BALL AWAY :\n" + indirectStrike.toString());
             System.out.println("THERE IS NOT PLAYER TO TAKE THE BALL AWAY DIRECTLY!");
+            if (ball.getPosition().getX() < MHN_AI.DANGER_ZONE_MAX_X) {
+                System.out.println("||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||TRYING TO DO A SUPER DEFENCE||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||");
+                SuperDefence superDefence;
+                for (int i = 0; i < PLAYERS_COUNT_IN_EACH_TEAM; i++) {
+                    superDefence = new SuperDefence(game.getMyTeam().getPlayer(i), game);
+                    if (superDefence.isThePlayerCapableOfSuperDefence()) {
+                        act.setPower(100);
+                        act.setPlayerID(i);
+                        act.setAngle((int) Math.round(superDefence.getPlayerShootAngle()));
+                        return true;
+                    }
+                }
+                System.out.println("NO PLAYER CAN DO SUPER DEFENCE!");
+            }
             return false;
         } else {
             System.out.println("ALL DIRECT SHOOTS FOR TAKING THE BALL AWAY:");
@@ -542,7 +555,7 @@ public class MHN_AI {
         if (angle > 45)
             angle -= 45;
         act.setAngle(angle);
-        act.setPower(25);
+        act.setPower(50);
     }
 
     private List<Double> calculateTheAnglesOfBallWithRespectToTheGoalForTeam(Team team) {

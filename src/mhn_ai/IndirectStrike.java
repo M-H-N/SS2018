@@ -22,6 +22,12 @@ public class IndirectStrike {
         this.player = player;
     }
 
+    public IndirectStrike(double ballAngle, Player player, double playerShootAngle) {
+        this.ballAngle = ballAngle;
+        this.player = player;
+        this.playerShootAngle = playerShootAngle;
+    }
+
     public void calculatePlayerShootAngle() {
 //        System.out.println("CALCULATING THE PLAYER(" + player.getId() + ") INDIRECT STRIKE ANGLE FOR BALL-ANGLE(" + ballAngle + ")");
         calculateStrikePlayerPosition();
