@@ -1,4 +1,3 @@
-package uiai;
 
 //import com.sun.javaws.exceptions.ExitException;
 

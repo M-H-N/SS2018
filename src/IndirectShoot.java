@@ -1,8 +1,3 @@
-package mhn_ai;
-
-import uiai.Ball;
-import uiai.Game;
-import uiai.Position;
 
 public class IndirectShoot {
     private Ball ball;

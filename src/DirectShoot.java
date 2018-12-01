@@ -1,6 +1,3 @@
-package mhn_ai;
-
-import uiai.*;
 
 public class DirectShoot {
     private static final double DISTANCE_TO_BALL_SCORE = 1d;

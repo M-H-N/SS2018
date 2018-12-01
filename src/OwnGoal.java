@@ -1,9 +1,4 @@
-package mhn_ai;
 
-import uiai.Ball;
-import uiai.Game;
-import uiai.Player;
-import uiai.Position;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -79,14 +74,17 @@ public class OwnGoal {
     private boolean isTheWayCleanForPlayerToPoint(Player playerFrom, Position destinationPoint) {
         //TODO==> THROWS NULL POINTER EXCEPTION
         Position checkingPosition;
+        Player checkingPlayer;
         for (int i = 0; i < MHN_AI.PLAYERS_COUNT_IN_EACH_TEAM; i++) {
-            if (playerFrom != game.getMyTeam().getPlayer(i)) {
-                checkingPosition = game.getMyTeam().getPlayer(i).getPosition();
+            checkingPlayer = game.getMyTeam().getPlayer(i);
+            if (playerFrom != checkingPlayer && player != checkingPlayer) {
+                checkingPosition = checkingPlayer.getPosition();
                 if (!MHN_AI.isTheWayClean(playerFrom.getPosition(), destinationPoint, checkingPosition, MHN_AI.MINIMUM_COLLISION_DISTANCE_FOR_2_PLAYERS))
                     return false;
             }
-            if (playerFrom != game.getOppTeam().getPlayer(i)) {
-                checkingPosition = game.getOppTeam().getPlayer(i).getPosition();
+            checkingPlayer = game.getOppTeam().getPlayer(i);
+            if (playerFrom != checkingPlayer && player != checkingPlayer) {
+                checkingPosition = checkingPlayer.getPosition();
                 if (!MHN_AI.isTheWayClean(playerFrom.getPosition(), destinationPoint, checkingPosition, MHN_AI.MINIMUM_COLLISION_DISTANCE_FOR_2_PLAYERS))
                     return false;
             }

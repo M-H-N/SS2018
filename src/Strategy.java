@@ -1,8 +1,6 @@
-package uiai;
 
-import mhn_ai.MHN_AI;
 
-import java.util.Random;
+import java.util.Date;
 
 /**
  * @author mdsinalpha
@@ -75,9 +73,11 @@ public class Strategy {
 //        act.setAngle(new Random().nextInt() % 360);
 //        act.setPower(100);
 
+        System.out.println(new Date().getTime());
         MHN_AI ai = new MHN_AI(act, game);
         ai.action();
         System.out.println("COMMANDED--> ANGLE: " + act.getAngle() + " , POWER: " + act.getPower() + " , PLAYER: " + act.getPlayer_id());
+        System.out.println(new Date().getTime());
         return act;
     }
 }

@@ -1,9 +1,4 @@
-package mhn_ai;
 
-import uiai.Game;
-import uiai.Player;
-import uiai.Position;
-import uiai.Team;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,9 +1,4 @@
-package mhn_ai;
 
-import uiai.Ball;
-import uiai.Game;
-import uiai.Player;
-import uiai.Position;
 
 public class SuperDefence {
     private static final float TARGET_LEFT_INNER_WALL_X = -8f;

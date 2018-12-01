@@ -1,6 +1,4 @@
-package mhn_ai;
 
-import uiai.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,7 +15,7 @@ public class MHN_AI {
     protected static final float BALL_DIAMETER = 0.5f; //ORIGINAL
     //    protected static final float BALL_DIAMETER = 0.6f;
     protected static final float PLAYER_DIAMETER = 1f; //ORIGINAL
-    //        protected static final float PLAYER_DIAMETER = 1.2f;
+    //    protected static final float PLAYER_DIAMETER = 1.2f;
     //        protected static final float PLAYER_DIAMETER = 1.04f;
     protected static final float INDIRECT_SHOOT_CHECK_STEP = 0.4f;
     protected static final float DIRECT_SHOOT_CHECK_STEP = 0.4f;
@@ -218,21 +216,35 @@ public class MHN_AI {
     }
 
     private boolean canMakeAnOwnGoal(List<Double> ballShootAngles) {
+        List<DirectShoot> ownGoalDirectShoots = new ArrayList<>();
         ballShootAngles = averageSequences(ballShootAngles);
         OwnGoal ownGoal;
+//        for (int i = 0; i < PLAYERS_COUNT_IN_EACH_TEAM; i++) {
+//            ownGoal = new OwnGoal(game, game.getOppTeam().getPlayer(i), ballShootAngles);
+//            if (ownGoal.isItPossible()) {
+//                DirectShoot directShoot = ownGoal.getTheBestStrikerPlayersDirectShoots();
+//                act.setAngle((int) Math.round(directShoot.getPlayerShootAngle()));
+//                act.setPlayerID(directShoot.getPlayer().getId());
+//                act.setPower(POWER_MAX);
+////                System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!<<CAN MAKE A DIRECT OWN GOAL BY A DIRECT STRIKE>>!!!!!!!!!!!!!!!!!!!!!!!!");
+//                return true;
+//            }
+//        }
+
         for (int i = 0; i < PLAYERS_COUNT_IN_EACH_TEAM; i++) {
             ownGoal = new OwnGoal(game, game.getOppTeam().getPlayer(i), ballShootAngles);
-            if (ownGoal.isItPossible()) {
-                DirectShoot directShoot = ownGoal.getTheBestStrikerPlayersDirectShoots();
-                act.setAngle((int) Math.round(directShoot.getPlayerShootAngle()));
-                act.setPlayerID(directShoot.getPlayer().getId());
-                act.setPower(POWER_MAX);
-//                System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!<<CAN MAKE A DIRECT OWN GOAL BY A DIRECT STRIKE>>!!!!!!!!!!!!!!!!!!!!!!!!");
-                return true;
-            }
+            if (!ownGoal.isItPossible())
+                continue;
+            ownGoalDirectShoots.add(ownGoal.getTheBestStrikerPlayersDirectShoots());
         }
 //        System.out.println("CAN NOT MAKE AN OWN GOAL BY DIRECT STRIKE!");
-        return false;
+        if (ownGoalDirectShoots.size() == 0)
+            return false;
+        DirectShoot finalDirectShoot = findTheNearestPlayerToTheBall(ownGoalDirectShoots);
+        act.setAngle((int) Math.round(finalDirectShoot.getPlayerShootAngle()));
+        act.setPlayerID(finalDirectShoot.getPlayer().getId());
+        act.setPower(POWER_MAX);
+        return true;
     }
 
     private boolean canTakeTheBallAwayFromTarget() {
@@ -247,6 +259,10 @@ public class MHN_AI {
             directShoots.addAll(whichPlayersCanStrikeThisDirectly(j, game.getMyTeam()));
             if (directShoots.size() > 0)
                 break;
+        }
+        for (int i = 0; i < directShoots.size(); i++) { //Filtering The DirectShoot
+            if (directShoots.get(i).getPlayer().getPosition().getX() < (FIELD_MIN_X + (PLAYER_DIAMETER / 2)))
+                directShoots.remove(i);
         }
         if (directShoots.size() == 0) {  //If there is no player to take the ball away directly
 //            List<IndirectStrike> indirectStrikes = new ArrayList<>();
@@ -281,8 +297,13 @@ public class MHN_AI {
                     }
                 }
 //                System.out.println("NO PLAYER CAN DO SUPER DEFENCE!");
-            }
-            return false;
+            } //If The SuperDefence can't be happened!
+            List<IndirectStrike> indirectStrikes = whichPlayersCanDefendIndirectly(game.getMyTeam());
+            if (indirectStrikes.size() == 0) return false;
+            IndirectStrike finalIndirectStrike = findTheBestIndirectStrike(indirectStrikes);
+            power = POWER_MAX;
+            playerId = finalIndirectStrike.getPlayer().getId();
+            playerAngle = (int) Math.round(finalIndirectStrike.getPlayerShootAngle());
         } else {
 //            System.out.println("ALL DIRECT SHOOTS FOR TAKING THE BALL AWAY:");
 //            for (DirectShoot directShoot1 : directShoots) System.out.println(directShoot1.toString());
@@ -360,7 +381,7 @@ public class MHN_AI {
 //                System.out.println("&&&&&&&&&&&THE PLAYER(" + i + ") CANNOT SHOOT DIRECTLY BECAUSE THE POSITION IS BAD!");
                 continue;
             }
-            System.out.println("&&&&&&&&&&&&&&&CALCULATED PLAYER SHOOT ANGLE FOR DIRECT STRIKE FOR BALL ANGLE(" + ballAngle + " IS:    " + playerDirectShoot);
+//            System.out.println("&&&&&&&&&&&&&&&CALCULATED PLAYER SHOOT ANGLE FOR DIRECT STRIKE FOR BALL ANGLE(" + ballAngle + " IS:    " + playerDirectShoot);
 //            DirectShoot directShoot = new DirectShoot(team.getPlayer(i), playerDirectShoot, ballAngle, team);
             if (!isTheWayOfPlayerToBallCleanForDirectShoot(playerDirectShoot)) {
 //                System.out.println("&&&&&&&&&&&THE PLAYER(" + i + ") CANNOT SHOOT BECAUSE THE WAY TO THE BALL IS BLOCKED!");
@@ -373,7 +394,7 @@ public class MHN_AI {
 
     private List<IndirectStrike> whichPlayersCanDefendIndirectly(Team team) {
         List<IndirectStrike> resultIndirectStrikes = new ArrayList<>();
-        for (int i = 0, j = 359; i < 180; i++, j--) {
+        for (int i = 0, j = 359; i < 70; i++, j--) {
             resultIndirectStrikes = whichPlayersCanStrikeThisIndirectly(i, team);
             if (resultIndirectStrikes.size() > 0)
                 break;
@@ -563,7 +584,7 @@ public class MHN_AI {
     private List<Double> calculateTheAnglesOfBallWithRespectToTheGoalForTeam(Team team) {
         double topAngle = calculateTheAngleOfBallWithRespectToTheGoal(getOppositeHSideOfTeam(team), VSide.TOP);
         double bottomAngle = calculateTheAngleOfBallWithRespectToTheGoal(getOppositeHSideOfTeam(team), VSide.BUTTON);
-        System.out.println("CASTED ANGLES OF BALL TO TARGET --> START: " + topAngle + " , END: " + bottomAngle);
+//        System.out.println("CASTED ANGLES OF BALL TO TARGET --> START: " + topAngle + " , END: " + bottomAngle);
         List<Double> result = new ArrayList<>();
         if (topAngle < 90 && bottomAngle > 270) { //CONDITION-1
             int counter = (int) ((topAngle + (360 - bottomAngle)) / DIRECT_SHOOT_CHECK_STEP);
@@ -800,7 +821,7 @@ public class MHN_AI {
                 uAngle = 180 - uAngle;
         }
 //        double angle = calculateAngleOfTwoPoints(ball.getPosition(), new Position(goalXPos, goalYPos));
-//        System.out.println("ANGLE IS: " + angle);
+        //        System.out.println("ANGLE IS: " + angle);
 //        if (angle < 0)
 //            angle += 360;
 //        System.out.println("FINAL ANGLE IS: " + uAngle);
