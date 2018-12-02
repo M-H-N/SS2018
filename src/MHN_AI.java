@@ -261,7 +261,7 @@ public class MHN_AI {
                 break;
         }
         for (int i = 0; i < directShoots.size(); i++) { //Filtering The DirectShoot
-            if (directShoots.get(i).getPlayer().getPosition().getX() < (FIELD_MIN_X + (PLAYER_DIAMETER / 2)))
+            if (directShoots.get(i).getPlayer().getPosition().getX() < (FIELD_MIN_X + PLAYER_DIAMETER ))
                 directShoots.remove(i);
         }
         if (directShoots.size() == 0) {  //If there is no player to take the ball away directly
@@ -287,14 +287,23 @@ public class MHN_AI {
             if (ball.getPosition().getX() < MHN_AI.DANGER_ZONE_MAX_X) {
 //                System.out.println("||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||TRYING TO DO A SUPER DEFENCE||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||");
                 SuperDefence superDefence;
+                List<SuperDefence> superDefences = new ArrayList<>();
                 for (int i = 0; i < PLAYERS_COUNT_IN_EACH_TEAM; i++) {
                     superDefence = new SuperDefence(game.getMyTeam().getPlayer(i), game);
                     if (superDefence.isThePlayerCapableOfSuperDefence()) {
-                        act.setPower(100);
-                        act.setPlayerID(i);
-                        act.setAngle((int) Math.round(superDefence.getPlayerShootAngle()));
-                        return true;
+//                        act.setPower(100);
+//                        act.setPlayerID(i);
+//                        act.setAngle((int) Math.round(superDefence.getPlayerShootAngle()));
+//                        return true;
+                        superDefences.add(superDefence);
                     }
+                }
+                if (superDefences.size() > 0) {
+                    superDefence = SuperDefence.findTheBestSuperDefence(superDefences, ball);
+                    act.setPower(POWER_MAX);
+                    act.setPlayerID(superDefence.getPlayer().getId());
+                    act.setAngle((int) Math.round(superDefence.getPlayerShootAngle()));
+                    return true;
                 }
 //                System.out.println("NO PLAYER CAN DO SUPER DEFENCE!");
             } //If The SuperDefence can't be happened!

@@ -1,4 +1,4 @@
-
+import java.util.List;
 
 public class SuperDefence {
     private static final float TARGET_LEFT_INNER_WALL_X = -8f;
@@ -18,6 +18,22 @@ public class SuperDefence {
         calculatePlayerWallStrikePoint();
         calculateThePlayerShootAngle();
         capable = isTheWayClean();
+    }
+
+    public static SuperDefence findTheBestSuperDefence(List<SuperDefence> superDefences, Ball ball) {
+        SuperDefence resultSuperDefence = null;
+        SuperDefence tempSD;
+        double min = Double.MAX_VALUE, tempD;
+
+        for (int i = 0; i < superDefences.size(); i++) {
+            tempSD = superDefences.get(i);
+            tempD = MHN_AI.calculateDistanceBetweenTwoPoints(ball.getPosition(), tempSD.getPlayerWallStrikePoint());
+            if (tempD < min) {
+                min = tempD;
+                resultSuperDefence = tempSD;
+            }
+        }
+        return resultSuperDefence;
     }
 
     public boolean isThePlayerCapableOfSuperDefence() {
