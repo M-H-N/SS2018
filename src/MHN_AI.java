@@ -262,10 +262,10 @@ public class MHN_AI {
                 break;
         }
         for (int i = 0; i < directShoots.size(); i++) { //Filtering The DirectShoot
-            if (directShoots.get(i).getPlayer().getPosition().getX() < (FIELD_MIN_X + PLAYER_DIAMETER))
+            if (directShoots.get(i).getPlayer().getPosition().getX() < (FIELD_MIN_X + PLAYER_DIAMETER) && (directShoots.get(i).getPlayerShootAngle() > 80 || directShoots.get(i).getPlayerShootAngle() < 280))
                 directShoots.remove(i);
         }
-        if (directShoots.size() == 0 || ball.getPosition().getX() < BALL_THRESHOLD_NEW) {  //If there is no player to take the ball away directly
+        if (directShoots.size() == 0) {  //If there is no player to take the ball away directly
 //            List<IndirectStrike> indirectStrikes = new ArrayList<>();
 //            for (int i = 0, j = 359; i < 60; i++, j--) {
 ////                System.out.println("CHECKING TAKING THE BALL AWAY INDIRECTLY FOR ANGLE: " + i + " AND " + j);
@@ -308,12 +308,19 @@ public class MHN_AI {
                 }
 //                System.out.println("NO PLAYER CAN DO SUPER DEFENCE!");
             } //If The SuperDefence can't be happened!
-            List<IndirectStrike> indirectStrikes = whichPlayersCanDefendIndirectly(game.getMyTeam());
-            if (indirectStrikes.size() == 0) return false;
-            IndirectStrike finalIndirectStrike = findTheBestIndirectStrike(indirectStrikes);
-            power = POWER_MAX;
-            playerId = finalIndirectStrike.getPlayer().getId();
-            playerAngle = (int) Math.round(finalIndirectStrike.getPlayerShootAngle());
+            if (ball.getPosition().getX() > BALL_THRESHOLD_NEW) {
+                List<IndirectStrike> indirectStrikes = whichPlayersCanDefendIndirectly(game.getMyTeam());
+                if (indirectStrikes.size() == 0) return false;
+                IndirectStrike finalIndirectStrike = findTheBestIndirectStrike(indirectStrikes);
+//                power = POWER_MAX;
+//                playerId = finalIndirectStrike.getPlayer().getId();
+//                playerAngle = (int) Math.round(finalIndirectStrike.getPlayerShootAngle());
+                act.setPower(POWER_MAX);
+                act.setPlayerID(finalIndirectStrike.getPlayer().getId());
+                act.setAngle((int) Math.round(finalIndirectStrike.getPlayerShootAngle()));
+                return true;
+            }
+            return false;
         } else {
 //            System.out.println("ALL DIRECT SHOOTS FOR TAKING THE BALL AWAY:");
 //            for (DirectShoot directShoot1 : directShoots) System.out.println(directShoot1.toString());

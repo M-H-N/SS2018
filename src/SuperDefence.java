@@ -46,7 +46,7 @@ public class SuperDefence {
 
     private boolean isTheWayClean() {
         Player checkingPlayer;
-        if (!MHN_AI.isTheWayClean(player.getPosition(), playerWallStrikePoint, ball.getPosition(), MHN_AI.MINIMUM_COLLISION_DISTANCE_FOR_BALL_AND_PLAYER_FROM_CENTER))
+        if (!MHN_AI.isTheWayClean(player.getPosition(), playerWallStrikePoint, ball.getPosition(), MHN_AI.MINIMUM_COLLISION_DISTANCE_FOR_BALL_AND_PLAYER_FROM_CENTER) && ball.getPosition().getY() <= MHN_AI.TARGET_TOP_Y && ball.getPosition().getY() >= MHN_AI.TARGET_BOTTOM_Y)
             return false;
         for (int i = 0; i < MHN_AI.PLAYERS_COUNT_IN_EACH_TEAM; i++) {
             if (i != player.getId()) {
