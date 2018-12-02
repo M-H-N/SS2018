@@ -36,6 +36,7 @@ public class MHN_AI {
     protected static final float MINIMUM_COLLISION_DISTANCE_FOR_2_PLAYERS = PLAYER_DIAMETER;
     //    private static final float DISTANCE_PER_100POWER = 15.75f;
     private static final float DISTANCE_PER_100POWER = 9.183f;
+    private static final float BALL_THRESHOLD_NEW = -6.5f;
 
     //TODO--> THESE ARE WHAT I NEED TO DO:
     //TODO-->(DONE)           1-REMOVE INDIRECT STRIKE FROM TAKING THE BALL AWAY
@@ -261,10 +262,10 @@ public class MHN_AI {
                 break;
         }
         for (int i = 0; i < directShoots.size(); i++) { //Filtering The DirectShoot
-            if (directShoots.get(i).getPlayer().getPosition().getX() < (FIELD_MIN_X + PLAYER_DIAMETER ))
+            if (directShoots.get(i).getPlayer().getPosition().getX() < (FIELD_MIN_X + PLAYER_DIAMETER))
                 directShoots.remove(i);
         }
-        if (directShoots.size() == 0) {  //If there is no player to take the ball away directly
+        if (directShoots.size() == 0 || ball.getPosition().getX() < BALL_THRESHOLD_NEW) {  //If there is no player to take the ball away directly
 //            List<IndirectStrike> indirectStrikes = new ArrayList<>();
 //            for (int i = 0, j = 359; i < 60; i++, j--) {
 ////                System.out.println("CHECKING TAKING THE BALL AWAY INDIRECTLY FOR ANGLE: " + i + " AND " + j);
