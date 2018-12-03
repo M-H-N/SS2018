@@ -262,7 +262,8 @@ public class MHN_AI {
                 break;
         }
         for (int i = 0; i < directShoots.size(); i++) { //Filtering The DirectShoot
-            if (directShoots.get(i).getPlayer().getPosition().getX() < (FIELD_MIN_X + PLAYER_DIAMETER) && (directShoots.get(i).getPlayerShootAngle() > 80 || directShoots.get(i).getPlayerShootAngle() < 280))
+//            if (directShoots.get(i).getPlayer().getPosition().getX() < (FIELD_MIN_X + PLAYER_DIAMETER) && (directShoots.get(i).getPlayerShootAngle() > 80 || directShoots.get(i).getPlayerShootAngle() < 280))
+            if (directShoots.get(i).getPlayer().getPosition().getX() < FIELD_MIN_X && (directShoots.get(i).getPlayerShootAngle() > 70 || directShoots.get(i).getPlayerShootAngle() < 290))
                 directShoots.remove(i);
         }
         if (directShoots.size() == 0) {  //If there is no player to take the ball away directly
