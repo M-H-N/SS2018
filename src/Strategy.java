@@ -10,20 +10,32 @@ public class Strategy {
         In case of setting wrong position, server will set default formation for your team.
          */
 
-        players[0] = new Player("MHN-1", new Position(-6.5, 0));
-        players[1] = new Player("MHN-2", new Position(-1, 0));
-//        players[1] = new Player("MHN-2", new Position(-2, 1));//OR
-//        players[1] = new Player("MHN-2", new Position(-1.5, 2));
-        players[2] = new Player("MHN-3", new Position(-5, -2));
-        players[3] = new Player("MHN-4", new Position(-5, 2));
-//        players[4] = new Player("MHN-5", new Position(-2, -1));//OR
-//        players[4] = new Player("MHN-5", new Position(-1.5, -2));
-        players[4] = new Player("MHN-5", new Position(-2.5, 0));
+//        players[0] = new Player("MHN-1", new Position(-6.5, 0));
+//        players[1] = new Player("MHN-2", new Position(-1, 0));
+////        players[1] = new Player("MHN-2", new Position(-2, 1));//OR
+////        players[1] = new Player("MHN-2", new Position(-1.5, 2));
+//        players[2] = new Player("MHN-3", new Position(-5, -2));
+//        players[3] = new Player("MHN-4", new Position(-5, 2));
+////        players[4] = new Player("MHN-5", new Position(-2, -1));//OR
+////        players[4] = new Player("MHN-5", new Position(-1.5, -2));
+//        players[4] = new Player("MHN-5", new Position(-2.5, 0));
 //        players[0] = new Player("R. Ahmadi", new Position(-6.5, 0));
 //        players[1] = new Player("E. Hajisafi", new Position(-2, 1));
 //        players[2] = new Player("M. Karimi", new Position(-5, -2));
 //        players[3] = new Player("M. Navidkia", new Position(-5, 2));
 //        players[4] = new Player("H. Aghili", new Position(-2, -1));
+
+
+
+        players[0] = new Player("MHN-1", new Position(-1, 0));
+        players[1] = new Player("MHN-2", new Position(-3, 0));
+        players[2] = new Player("MHN-3", new Position(-6.25, 1.25));
+        players[3] = new Player("MHN-4", new Position(-6.25, -1.25));
+        players[4] = new Player("MHN-5", new Position(-6, 0));
+
+
+
+
         return players;
     }
 

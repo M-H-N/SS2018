@@ -49,6 +49,24 @@ public class OwnGoal {
         }
     }
 
+    protected static DirectShoot calculateThePlayerToPlayerDirectShoot(Player strikerPlayer, Player player, double playerShootAngle) {
+        if (playerShootAngle > 90 && playerShootAngle < 270 && strikerPlayer.getPosition().getX() < player.getPosition().getX())
+            return new DirectShoot(null, MHN_AI.FAILED_CODE, MHN_AI.FAILED_CODE);
+        if ((playerShootAngle < 90 || playerShootAngle > 270) && strikerPlayer.getPosition().getX() > player.getPosition().getX())
+            return new DirectShoot(null, MHN_AI.FAILED_CODE, MHN_AI.FAILED_CODE);
+        if (playerShootAngle < 180 && strikerPlayer.getPosition().getY() > player.getPosition().getY())
+            return new DirectShoot(null, MHN_AI.FAILED_CODE, MHN_AI.FAILED_CODE);
+        if (playerShootAngle > 180 && strikerPlayer.getPosition().getY() < player.getPosition().getY())
+            return new DirectShoot(null, MHN_AI.FAILED_CODE, MHN_AI.FAILED_CODE);
+
+        final Position strikerPlayerStrikePoint = calculateTheExpectedStrikerPlayerStrikePoint(player, playerShootAngle);
+        final double strikerPlayerShootAngle = MHN_AI.calculateTheAngleFromTo(strikerPlayer.getPosition(), strikerPlayerStrikePoint);
+        if (strikerPlayerShootAngle >= 90 && strikerPlayerShootAngle <= 270 && (playerShootAngle < 90 || playerShootAngle > 270))
+            return new DirectShoot(null, MHN_AI.FAILED_CODE, MHN_AI.FAILED_CODE);
+        return new DirectShoot(strikerPlayer, player, strikerPlayerShootAngle, playerShootAngle, strikerPlayerStrikePoint);
+    }
+
+
     private void filterPlayerDirectShoots() {
         for (int i = 0; i < playerDirectShoots.size(); i++) {
             if (!isTheWayCleanForPlayerToPoint(player, playerDirectShoots.get(i).getPlayerStrikePoint()))
@@ -68,8 +86,10 @@ public class OwnGoal {
     }
 
     public DirectShoot getTheBestStrikerPlayersDirectShoots() { //returns null if the list is empty, so the method 'isItPossible' must be called!
-        return MHN_AI.findTheBestDirectShoot(strikerPlayerDirectShoots);
+//        return MHN_AI.findTheBestDirectShoot(strikerPlayerDirectShoots);
+        return MHN_AI.findTheNearestDirectShootByBallPlayer(strikerPlayerDirectShoots);
     }
+
 
     private boolean isTheWayCleanForPlayerToPoint(Player playerFrom, Position destinationPoint) {
         //TODO==> THROWS NULL POINTER EXCEPTION
@@ -92,26 +112,10 @@ public class OwnGoal {
         return true;
     }
 
-    protected static DirectShoot calculateThePlayerToPlayerDirectShoot(Player strikerPlayer, Player player, double playerShootAngle) {
-        if (playerShootAngle > 90 && playerShootAngle < 270 && strikerPlayer.getPosition().getX() < player.getPosition().getX())
-            return new DirectShoot(player, MHN_AI.FAILED_CODE, playerShootAngle);
-        if ((playerShootAngle < 90 || playerShootAngle > 270) && strikerPlayer.getPosition().getX() > player.getPosition().getX())
-            return new DirectShoot(player, MHN_AI.FAILED_CODE, playerShootAngle);
-        if (playerShootAngle < 180 && strikerPlayer.getPosition().getY() > player.getPosition().getY())
-            return new DirectShoot(player, MHN_AI.FAILED_CODE, playerShootAngle);
-        if (playerShootAngle > 180 && strikerPlayer.getPosition().getY() < player.getPosition().getY())
-            return new DirectShoot(player, MHN_AI.FAILED_CODE, playerShootAngle);
-
-        final Position strikerPlayerStrikePoint = calculateTheExpectedStrikerPlayerStrikePoint(player, playerShootAngle);
-        final double strikerPlayerShootAngle = MHN_AI.calculateTheAngleFromTo(strikerPlayer.getPosition(), strikerPlayerStrikePoint);
-        if (strikerPlayerShootAngle >= 90 && strikerPlayerShootAngle <= 270 && (playerShootAngle < 90 || playerShootAngle > 270))
-            return new DirectShoot(player, MHN_AI.FAILED_CODE, playerShootAngle);
-        return new DirectShoot(strikerPlayer, player, strikerPlayerShootAngle, playerShootAngle, strikerPlayerStrikePoint);
-    }
 
     protected static Position calculateTheExpectedStrikerPlayerStrikePoint(Player player, double playerShootAngle) {
-        double xPos = player.getPosition().getX() - (Math.cos(Math.toRadians(playerShootAngle)) * MHN_AI.PLAYER_DIAMETER);
-        double yPos = player.getPosition().getY() - (Math.sin(Math.toRadians(playerShootAngle)) * MHN_AI.PLAYER_DIAMETER);
+        double xPos = player.getPosition().getX() - (Math.cos(Math.toRadians(playerShootAngle)) * MHN_AI.MINIMUM_COLLISION_DISTANCE_FOR_2_PLAYERS);
+        double yPos = player.getPosition().getY() - (Math.sin(Math.toRadians(playerShootAngle)) * MHN_AI.MINIMUM_COLLISION_DISTANCE_FOR_2_PLAYERS);
         return new Position(xPos, yPos);
     }
 

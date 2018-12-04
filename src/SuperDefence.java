@@ -7,9 +7,11 @@ public class SuperDefence {
     private final Game game;
     private Position playerWallStrikePoint;
     private double playerShootAngle;
-    private static final Position topTargetPosition = new Position(MHN_AI.TARGET_LEFT_X, MHN_AI.TARGET_TOP_Y);
-    private static final Position bottomTargetPosition = new Position(MHN_AI.TARGET_LEFT_X, MHN_AI.TARGET_BOTTOM_Y);
+    private static final Position TOP_TARGET_BAR_POSITION = new Position(MHN_AI.TARGET_LEFT_X, MHN_AI.TARGET_TOP_Y);
+    private static final Position BOTTOM_TARGET_BAR_POSITION = new Position(MHN_AI.TARGET_LEFT_X, MHN_AI.TARGET_BOTTOM_Y);
     private boolean capable = false;
+    private boolean capableTotal = true;
+    private boolean isInside = false;
 
     public SuperDefence(Player player, Game game) {
         this.ball = game.getBall();
@@ -37,7 +39,7 @@ public class SuperDefence {
     }
 
     public boolean isThePlayerCapableOfSuperDefence() {
-        return capable;
+        return (capable && capableTotal);
     }
 
     public IndirectStrike getIndirectStrike() {
@@ -66,20 +68,36 @@ public class SuperDefence {
     }
 
     private void calculatePlayerWallStrikePoint() {
+        Position resultPosition;
         double distanceA = Math.abs(MHN_AI.FIELD_MIN_X - player.getPosition().getX()) - (MHN_AI.PLAYER_DIAMETER / 2);
         double distanceB = Math.abs(MHN_AI.FIELD_MIN_X - ball.getPosition().getX()) - (MHN_AI.PLAYER_DIAMETER / 2);
         double xWallStrikePoint = MHN_AI.FIELD_MIN_X + (MHN_AI.PLAYER_DIAMETER / 2);
         double yWallStrikePoint = ((player.getPosition().getY() * distanceB) + (ball.getPosition().getY() * distanceA)) / (distanceA + distanceB);
-        if (yWallStrikePoint + (MHN_AI.PLAYER_DIAMETER / 2) >= topTargetPosition.getY() || yWallStrikePoint - (MHN_AI.PLAYER_DIAMETER / 2) <= bottomTargetPosition.getY()) {
+        resultPosition = new Position(xWallStrikePoint, yWallStrikePoint);
+        double playerAngleTemp = MHN_AI.calculateTheAngleFromTo(player.getPosition(), resultPosition);
+        double yol = MHN_AI.calculateTheYOnX(player.getPosition(), playerAngleTemp, MHN_AI.TARGET_LEFT_X);
+
+        if (yol < TOP_TARGET_BAR_POSITION.getY() && yol > BOTTOM_TARGET_BAR_POSITION.getY()) {
+            //HERE IS THE CONDITION FOR STRIKING INSIDE OF THE TARGET...
+            System.out.println("HITTING INSIDE FOR PLAYER" + player.getId());
+            distanceA = Math.abs(TARGET_LEFT_INNER_WALL_X - player.getPosition().getX()) - (MHN_AI.PLAYER_DIAMETER / 2);
+            distanceB = Math.abs(TARGET_LEFT_INNER_WALL_X - ball.getPosition().getX()) - (MHN_AI.PLAYER_DIAMETER / 2);
+            xWallStrikePoint = TARGET_LEFT_INNER_WALL_X + (MHN_AI.PLAYER_DIAMETER / 2);
+            yWallStrikePoint = ((player.getPosition().getY() * distanceB) + (ball.getPosition().getY() * distanceA)) / (distanceA + distanceB);
             playerWallStrikePoint = new Position(xWallStrikePoint, yWallStrikePoint);
-            return;
+            if (playerAngleTemp > 180)
+                playerAngleTemp = 360 - playerAngleTemp;
+            else
+                playerAngleTemp = 180 - playerAngleTemp;
+            yol = MHN_AI.calculateTheYOnX(playerWallStrikePoint, playerAngleTemp, MHN_AI.TARGET_LEFT_X);
+            if ((yol >= TOP_TARGET_BAR_POSITION.getY() - (MHN_AI.PLAYER_DIAMETER / 2)) || (yol <= BOTTOM_TARGET_BAR_POSITION.getY() + (MHN_AI.PLAYER_DIAMETER / 2)))
+                capableTotal = false;
         }
-        //TODO==> WRITE ANOTHER CONDITION! (URGENT)
-        distanceA = Math.abs(TARGET_LEFT_INNER_WALL_X - player.getPosition().getX()) - (MHN_AI.PLAYER_DIAMETER / 2);
-        distanceB = Math.abs(TARGET_LEFT_INNER_WALL_X - ball.getPosition().getX()) - (MHN_AI.PLAYER_DIAMETER / 2);
-        xWallStrikePoint = TARGET_LEFT_INNER_WALL_X + (MHN_AI.PLAYER_DIAMETER / 2);
-        yWallStrikePoint = ((player.getPosition().getY() * distanceB) + (ball.getPosition().getY() * distanceA)) / (distanceA + distanceB);
-        playerWallStrikePoint = new Position(xWallStrikePoint, yWallStrikePoint);
+        playerWallStrikePoint = resultPosition;
+//        if (yWallStrikePoint + (MHN_AI.PLAYER_DIAMETER / 2) >= TOP_TARGET_BAR_POSITION.getY() || yWallStrikePoint - (MHN_AI.PLAYER_DIAMETER / 2) <= BOTTOM_TARGET_BAR_POSITION.getY()) {
+//            playerWallStrikePoint = new Position(xWallStrikePoint, yWallStrikePoint);
+//            return;
+//        } [ORIGINAL]
     }
 
     private void calculateThePlayerShootAngle() {
@@ -113,15 +131,15 @@ public class SuperDefence {
         return playerShootAngle;
     }
 
-    public static Position getTopTargetPosition() {
-        return topTargetPosition;
+    public static Position getTopTargetBarPosition() {
+        return TOP_TARGET_BAR_POSITION;
     }
 
-    public static Position getBottomTargetPosition() {
-        return bottomTargetPosition;
+    public static Position getBottomTargetBarPosition() {
+        return BOTTOM_TARGET_BAR_POSITION;
     }
 
-    public boolean isCapable() {
-        return capable;
+    public boolean isInside() {
+        return isInside;
     }
 }

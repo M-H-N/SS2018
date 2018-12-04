@@ -62,7 +62,7 @@ public class IndirectStrike {
                 return false;
             }
         }
-        return true;
+        return false;
     }
 
     private void calculateStrikePlayerPosition() {
