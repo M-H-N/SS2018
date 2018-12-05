@@ -43,7 +43,13 @@ public class MHN_AI {
     //TODO-->(DONE)  II- ADD INDIRECT OWN GOAL
     //TODO-->(DONE) III- FIND THE EXACT PLAYER DIAMETER
     //TODO-->(DONE)  IV- CHANGE THE FORMATION
-    //TODO-->   V- ADD FRACTION [HUGE] ):
+    //TODO-->         V- ADD FRACTION [HUGE] ):
+    //TODO-->        VI- OWN GOAL CLASS CLEAN WAY CHECKING HAS SOME ISSUES
+    //TODO-->       VII-
+    //TODO-->        IX-
+    //TODO-->         X-
+    //TODO-->        XI-
+
 
     public MHN_AI(Triple act, Game game) {
         this.act = act;
