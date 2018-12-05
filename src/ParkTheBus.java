@@ -73,12 +73,22 @@ public class ParkTheBus {
         final double bottomAngle = MHN_AI.calculateTheAngleFromTo(CENTER, TARGET_BOTTOM);
         int steps = (int) ((360 - bottomAngle + topAngle) / SCAN_STEP);
         Position holePoint;
-        for (double angle = bottomAngle; steps > 0; angle += SCAN_STEP, steps--) {
-            if (angle >= 360)
-                angle = 0;
-            holePoint = getTheFirstHoleForAngle(angle);
-            if (holePoint != null)
-                destinations.add(holePoint);
+        if (game.getBall().getPosition().getY() < 0) {
+            for (double angle = bottomAngle; steps > 0; angle += SCAN_STEP, steps--) {
+                if (angle >= 360)
+                    angle = 0;
+                holePoint = getTheFirstHoleForAngle(angle);
+                if (holePoint != null)
+                    destinations.add(holePoint);
+            }
+        } else {
+            for (double angle = topAngle; steps > 0; angle -= SCAN_STEP, steps--) {
+                if (angle >= 360)
+                    angle = 0;
+                holePoint = getTheFirstHoleForAngle(angle);
+                if (holePoint != null)
+                    destinations.add(holePoint);
+            }
         }
     }
 
@@ -160,7 +170,7 @@ public class ParkTheBus {
         }
 
         public int getPlayerShootAngleInt() {
-            return (int) Math.round(playerShootAngle);
+            return MHN_AI.getIntAngle(playerShootAngle);
         }
 
         public Defence setPlayerShootAngle(double playerShootAngle) {

@@ -14,12 +14,14 @@ public class SuperDefence {
     private boolean isInside = false;
 
     public SuperDefence(Player player, Game game) {
-        this.ball = game.getBall();
         this.player = player;
         this.game = game;
+        this.ball = game.getBall();
+        System.out.println("///////////////////[START] SUPER DEFENCE FOR PLAYER--> " + player.getId());
         calculatePlayerWallStrikePoint();
         calculateThePlayerShootAngle();
         capable = isTheWayClean();
+        System.out.println("///////////////////[END] SUPER DEFENCE FOR PLAYER--> " + player.getId());
     }
 
     public static SuperDefence findTheBestSuperDefence(List<SuperDefence> superDefences, Ball ball) {
@@ -39,7 +41,7 @@ public class SuperDefence {
     }
 
     public boolean isThePlayerCapableOfSuperDefence() {
-        return (capable && capableTotal);
+        return (capableTotal && capable);
     }
 
     public IndirectStrike getIndirectStrike() {
@@ -48,36 +50,46 @@ public class SuperDefence {
 
     private boolean isTheWayClean() {
         Player checkingPlayer;
-        if (!MHN_AI.isTheWayClean(player.getPosition(), playerWallStrikePoint, ball.getPosition(), MHN_AI.MINIMUM_COLLISION_DISTANCE_FOR_BALL_AND_PLAYER_FROM_CENTER) && ball.getPosition().getY() <= MHN_AI.TARGET_TOP_Y && ball.getPosition().getY() >= MHN_AI.TARGET_BOTTOM_Y)
+//        if (!MHN_AI.isTheWayClean(player.getPosition(), playerWallStrikePoint, ball.getPosition(), MHN_AI.MINIMUM_COLLISION_DISTANCE_FOR_BALL_AND_PLAYER_FROM_CENTER)
+//                && ball.getPosition().getY() <= MHN_AI.TARGET_TOP_Y && ball.getPosition().getY() >= MHN_AI.TARGET_BOTTOM_Y)
+        if (!MHN_AI.isTheWayClean(player.getPosition(), playerWallStrikePoint, ball.getPosition(), MHN_AI.MINIMUM_COLLISION_DISTANCE_FOR_BALL_AND_PLAYER_FROM_CENTER))
             return false;
         for (int i = 0; i < MHN_AI.PLAYERS_COUNT_IN_EACH_TEAM; i++) {
-            if (i != player.getId()) {
+            if (player != game.getMyTeam().getPlayer(i)) {
                 checkingPlayer = game.getMyTeam().getPlayer(i);
                 if (!MHN_AI.isTheWayClean(player.getPosition(), playerWallStrikePoint, checkingPlayer.getPosition(), MHN_AI.MINIMUM_COLLISION_DISTANCE_FOR_2_PLAYERS))
                     return false;
                 if (!MHN_AI.isTheWayClean(playerWallStrikePoint, ball.getPosition(), checkingPlayer.getPosition(), MHN_AI.MINIMUM_COLLISION_DISTANCE_FOR_2_PLAYERS))
                     return false;
             }
-            checkingPlayer = game.getOppTeam().getPlayer(i);
-            if (!MHN_AI.isTheWayClean(player.getPosition(), playerWallStrikePoint, checkingPlayer.getPosition(), MHN_AI.MINIMUM_COLLISION_DISTANCE_FOR_2_PLAYERS))
-                return false;
-            if (!MHN_AI.isTheWayClean(playerWallStrikePoint, ball.getPosition(), checkingPlayer.getPosition(), MHN_AI.MINIMUM_COLLISION_DISTANCE_FOR_2_PLAYERS))
-                return false;
+            if (player != game.getOppTeam().getPlayer(i)) {
+                checkingPlayer = game.getOppTeam().getPlayer(i);
+                if (!MHN_AI.isTheWayClean(player.getPosition(), playerWallStrikePoint, checkingPlayer.getPosition(), MHN_AI.MINIMUM_COLLISION_DISTANCE_FOR_2_PLAYERS))
+                    return false;
+                if (!MHN_AI.isTheWayClean(playerWallStrikePoint, ball.getPosition(), checkingPlayer.getPosition(), MHN_AI.MINIMUM_COLLISION_DISTANCE_FOR_2_PLAYERS))
+                    return false;
+            }
         }
         return true;
     }
 
     private void calculatePlayerWallStrikePoint() {
-        Position resultPosition;
         double distanceA = Math.abs(MHN_AI.FIELD_MIN_X - player.getPosition().getX()) - (MHN_AI.PLAYER_DIAMETER / 2);
         double distanceB = Math.abs(MHN_AI.FIELD_MIN_X - ball.getPosition().getX()) - (MHN_AI.PLAYER_DIAMETER / 2);
         double xWallStrikePoint = MHN_AI.FIELD_MIN_X + (MHN_AI.PLAYER_DIAMETER / 2);
         double yWallStrikePoint = ((player.getPosition().getY() * distanceB) + (ball.getPosition().getY() * distanceA)) / (distanceA + distanceB);
-        resultPosition = new Position(xWallStrikePoint, yWallStrikePoint);
+        final Position resultPosition = new Position(xWallStrikePoint, yWallStrikePoint);
         double playerAngleTemp = MHN_AI.calculateTheAngleFromTo(player.getPosition(), resultPosition);
-        double yol = MHN_AI.calculateTheYOnX(player.getPosition(), playerAngleTemp, MHN_AI.TARGET_LEFT_X);
-
-        if (yol < TOP_TARGET_BAR_POSITION.getY() && yol > BOTTOM_TARGET_BAR_POSITION.getY()) {
+        double yOnTargetLine = MHN_AI.calculateTheYOnX(player.getPosition(), playerAngleTemp, MHN_AI.TARGET_LEFT_X);
+        System.out.println("CALCULATED PLAYER ANGLE TEMP:   " + playerAngleTemp);
+        System.out.println("CALCULATED Y ON X:              " + yOnTargetLine);
+        System.out.println("CALCULATED WALL STRIKE POS:     " + resultPosition.toString());
+        if (distanceA < 0
+                || distanceB < 0
+                || !(
+                (yOnTargetLine + (MHN_AI.PLAYER_DIAMETER / 2)) > TOP_TARGET_BAR_POSITION.getY()
+                        || (yOnTargetLine - (MHN_AI.PLAYER_DIAMETER / 2)) < BOTTOM_TARGET_BAR_POSITION.getY())
+                ) {
             //HERE IS THE CONDITION FOR STRIKING INSIDE OF THE TARGET...
             System.out.println("HITTING INSIDE FOR PLAYER" + player.getId());
             distanceA = Math.abs(TARGET_LEFT_INNER_WALL_X - player.getPosition().getX()) - (MHN_AI.PLAYER_DIAMETER / 2);
@@ -85,13 +97,16 @@ public class SuperDefence {
             xWallStrikePoint = TARGET_LEFT_INNER_WALL_X + (MHN_AI.PLAYER_DIAMETER / 2);
             yWallStrikePoint = ((player.getPosition().getY() * distanceB) + (ball.getPosition().getY() * distanceA)) / (distanceA + distanceB);
             playerWallStrikePoint = new Position(xWallStrikePoint, yWallStrikePoint);
+            playerAngleTemp = MHN_AI.calculateTheAngleFromTo(player.getPosition(), playerWallStrikePoint);
+            System.out.println("CALCULATED PLAYER ANGLE TEMP:   " + playerAngleTemp);
             if (playerAngleTemp > 180)
-                playerAngleTemp = 360 - playerAngleTemp;
+                playerAngleTemp = 270 - playerAngleTemp;
             else
                 playerAngleTemp = 180 - playerAngleTemp;
-            yol = MHN_AI.calculateTheYOnX(playerWallStrikePoint, playerAngleTemp, MHN_AI.TARGET_LEFT_X);
-            if ((yol >= TOP_TARGET_BAR_POSITION.getY() - (MHN_AI.PLAYER_DIAMETER / 2)) || (yol <= BOTTOM_TARGET_BAR_POSITION.getY() + (MHN_AI.PLAYER_DIAMETER / 2)))
+            yOnTargetLine = MHN_AI.calculateTheYOnX(playerWallStrikePoint, playerAngleTemp, MHN_AI.TARGET_LEFT_X);
+            if (((yOnTargetLine + (MHN_AI.PLAYER_DIAMETER / 2)) >= TOP_TARGET_BAR_POSITION.getY()) || ((yOnTargetLine - (MHN_AI.PLAYER_DIAMETER / 2)) <= BOTTOM_TARGET_BAR_POSITION.getY()))
                 capableTotal = false;
+            return;
         }
         playerWallStrikePoint = resultPosition;
 //        if (yWallStrikePoint + (MHN_AI.PLAYER_DIAMETER / 2) >= TOP_TARGET_BAR_POSITION.getY() || yWallStrikePoint - (MHN_AI.PLAYER_DIAMETER / 2) <= BOTTOM_TARGET_BAR_POSITION.getY()) {

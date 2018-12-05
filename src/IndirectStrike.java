@@ -31,7 +31,7 @@ public class IndirectStrike {
 //        System.out.println(">>>>>>>>>>>>>>>>>>>THE EXPECTED WALL STRIKE POSITION:   " + wallStrikePoint.toString());
 //        System.out.println(">>>>>>>>>>>>>>>>>>>THE EXPECTED PLAYER STRIKE POSITION: " + strikePlayerPosition.toString());
 
-        final double M = MHN_AI.calculateTheMBetween2Points(wallStrikePoint, player.getPosition());
+        final double M = MHN_AI.calculateTheMBetween2Points(player.getPosition(), wallStrikePoint);
         double result = Math.abs(Math.toDegrees(Math.atan(M)));
 //        System.out.println("THE PURE ABSOLUTE ANGLE IS: " + result);
         if (wallStrikePoint.getX() > player.getPosition().getX()) {
@@ -57,12 +57,10 @@ public class IndirectStrike {
         if (ball.getPosition().getY() - MHN_AI.FIELD_MIN_Y < MHN_AI.PLAYER_DIAMETER)
             return false;
         if (wallStrikePoint != null) {
-            if (ball.getPosition().getY() > (MHN_AI.FIELD_MAX_Y - (MHN_AI.PLAYER_DIAMETER / 2)) || ball.getPosition().getY() < (MHN_AI.FIELD_MIN_Y + (MHN_AI.PLAYER_DIAMETER / 2))) {
-//                System.out.println("UNSUITABLE WALL STRIKE POINT!");
+            if ((ball.getPosition().getY() >= (MHN_AI.FIELD_MAX_Y - (MHN_AI.PLAYER_DIAMETER / 2))) || (ball.getPosition().getY() < (MHN_AI.FIELD_MIN_Y + (MHN_AI.PLAYER_DIAMETER / 2))))
                 return false;
-            }
         }
-        return false;
+        return true;
     }
 
     private void calculateStrikePlayerPosition() {
@@ -131,33 +129,26 @@ public class IndirectStrike {
     private boolean isThePlayerWayToTheWallClean(Game game) {
 //        System.out.println("CHECKING--> IS THE WAY TO THE WALL CLEAN FOR PLAYER(" + player.getId() + ")");
         Position checkingPosition;
-        if (!MHN_AI.isTheWayClean(player.getPosition(), wallStrikePoint, ball.getPosition(), MHN_AI.MINIMUM_COLLISION_DISTANCE_FOR_BALL_AND_PLAYER_FROM_CENTER)) {
-//            System.out.println("THE PLAYER COLLIDES WITH BALL IN THE WAY OF WALL!");
+        if (!MHN_AI.isTheWayClean(player.getPosition(), wallStrikePoint, ball.getPosition(), MHN_AI.MINIMUM_COLLISION_DISTANCE_FOR_BALL_AND_PLAYER_FROM_CENTER))
             return false;
-        }
-
         for (int i = 0; i < MHN_AI.PLAYERS_COUNT_IN_EACH_TEAM; i++) {
             checkingPosition = game.getMyTeam().getPlayer(i).getPosition();
             if (game.getMyTeam().getPlayer(i) == player)
                 continue;
-            if (checkingPosition.getY() == player.getPosition().getX() && checkingPosition.getY() == player.getPosition().getY())
+            if (checkingPosition.getX() == player.getPosition().getX() && checkingPosition.getY() == player.getPosition().getY())
                 continue;
-            if (!MHN_AI.isTheWayClean(player.getPosition(), wallStrikePoint, checkingPosition, MHN_AI.MINIMUM_COLLISION_DISTANCE_FOR_2_PLAYERS)) {
-//                System.out.println("THE PLAYER(" + player.getId() + ") COLLIDES WITH AN OUR PLAYER(" + i + ") IN WAY TO THE WALL!");
+            if (!MHN_AI.isTheWayClean(player.getPosition(), wallStrikePoint, checkingPosition, MHN_AI.MINIMUM_COLLISION_DISTANCE_FOR_2_PLAYERS))
                 return false;
-            }
         }
 //        System.out.println("THE PLAYER(" + player.getId() + ") DOESN'T COLLIDE WITH OUR PLAYERS");
         for (int i = 0; i < MHN_AI.PLAYERS_COUNT_IN_EACH_TEAM; i++) {
             checkingPosition = game.getOppTeam().getPlayer(i).getPosition();
             if (game.getOppTeam().getPlayer(i) == player)
                 continue;
-            if (checkingPosition.getY() == player.getPosition().getX() && checkingPosition.getY() == player.getPosition().getY())
+            if (checkingPosition.getX() == player.getPosition().getX() && checkingPosition.getY() == player.getPosition().getY())
                 continue;
-            if (!MHN_AI.isTheWayClean(player.getPosition(), wallStrikePoint, checkingPosition, MHN_AI.MINIMUM_COLLISION_DISTANCE_FOR_2_PLAYERS)) {
-//                System.out.println("THE PLAYER(" + player.getId() + ") COLLIDES WITH AN ENEMY PLAYER(" + i + ") IN WAY TO THE WALL!");
+            if (!MHN_AI.isTheWayClean(player.getPosition(), wallStrikePoint, checkingPosition, MHN_AI.MINIMUM_COLLISION_DISTANCE_FOR_2_PLAYERS))
                 return false;
-            }
         }
 //        System.out.println("THE PLAYER(" + player.getId() + ") DOESN'T COLLIDE WITH ENEMY PLAYERS");
 //        System.out.println("THE WAY OF PLAYER(" + player.getId() + ") TO THE WALL IS TOTALLY CLEAN FOR ANGLE(" + playerShootAngle + ")!");
@@ -171,24 +162,20 @@ public class IndirectStrike {
             checkingPosition = game.getMyTeam().getPlayer(i).getPosition();
             if (game.getMyTeam().getPlayer(i) == player)
                 continue;
-            if (checkingPosition.getY() == player.getPosition().getX() && checkingPosition.getY() == player.getPosition().getY())
+            if (checkingPosition.getX() == player.getPosition().getX() && checkingPosition.getY() == player.getPosition().getY())
                 continue;
-            if (!MHN_AI.isTheWayClean(wallStrikePoint, strikePlayerPosition, checkingPosition, MHN_AI.MINIMUM_COLLISION_DISTANCE_FOR_2_PLAYERS)) {
-//                System.out.println("THE PLAYER COLLIDES WITH AN OUR PLAYER(" + i + ") IN WAY OF WALL TO THE BALL FOR ANGLE(" + playerShootAngle + ")!");
+            if (!MHN_AI.isTheWayClean(wallStrikePoint, strikePlayerPosition, checkingPosition, MHN_AI.MINIMUM_COLLISION_DISTANCE_FOR_2_PLAYERS))
                 return false;
-            }
         }
 //        System.out.println("THE PLAYER(" + player.getId() + ") DOESN'T COLLIDE WITH OUR PLAYERS IN WAY OF WALL TO THE BALL FOR ANGLE(" + playerShootAngle + ")!");
         for (int i = 0; i < MHN_AI.PLAYERS_COUNT_IN_EACH_TEAM; i++) { //CHECKING ENEMY PLAYERS
             checkingPosition = game.getOppTeam().getPlayer(i).getPosition();
             if (game.getOppTeam().getPlayer(i) == player)
                 continue;
-            if (checkingPosition.getY() == player.getPosition().getX() && checkingPosition.getY() == player.getPosition().getY())
+            if (checkingPosition.getX() == player.getPosition().getX() && checkingPosition.getY() == player.getPosition().getY())
                 continue;
-            if (!MHN_AI.isTheWayClean(wallStrikePoint, strikePlayerPosition, checkingPosition, MHN_AI.MINIMUM_COLLISION_DISTANCE_FOR_2_PLAYERS)) {
-//                System.out.println("THE PLAYER COLLIDES WITH AN ENEMY PLAYER(" + i + ") IN WAY OF WALL TO THE BALL FOR ANGLE(" + playerShootAngle + ")!");
+            if (!MHN_AI.isTheWayClean(wallStrikePoint, strikePlayerPosition, checkingPosition, MHN_AI.MINIMUM_COLLISION_DISTANCE_FOR_2_PLAYERS))
                 return false;
-            }
         }
 //        System.out.println("THE PLAYER(" + player.getId() + ") DOESN'T COLLIDE WITH ENEMY PLAYERS IN WAY OF WALL TO THE BALL FOR ANGLE(" + playerShootAngle + ")!");
 //        System.out.println("THE WAY OF PLAYER(" + player.getId() + ") FROM THE WALL TO THE BALL IS TOTALLY CLEAN FOR ANGLE(" + playerShootAngle + ")!");

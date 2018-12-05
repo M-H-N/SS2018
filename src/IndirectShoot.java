@@ -11,10 +11,10 @@ public class IndirectShoot {
     private Game game;
     private boolean topPossible, bottomPossible;
 
-    public IndirectShoot(Ball ball, Position finalPosition, Game game) {
-        this.ball = ball;
-        this.finalPoint = finalPosition;
+    public IndirectShoot(Position finalPosition, Game game) {
         this.game = game;
+        this.finalPoint = finalPosition;
+        this.ball = game.getBall();
     }
 
     public boolean isItPossibleForTop() {
