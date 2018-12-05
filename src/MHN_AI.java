@@ -39,11 +39,11 @@ public class MHN_AI {
     protected final Ball ball;
 
     //TODO--> THESE ARE WHAT I NEED TO DO:
-    //TODO-->   I- FIX THE FUCKING INDIRECT DEFENCE
-    //TODO-->  II- ADD INDIRECT OWN GOAL
+    //TODO-->(DONE)   I- FIX THE FUCKING INDIRECT DEFENCE
+    //TODO-->(DONE)  II- ADD INDIRECT OWN GOAL
     //TODO-->(DONE) III- FIND THE EXACT PLAYER DIAMETER
-    //TODO-->  IV- CHANGE THE FORMATION
-    //TODO-->   V- ADD FRACTION [HUGE]
+    //TODO-->(DONE)  IV- CHANGE THE FORMATION
+    //TODO-->   V- ADD FRACTION [HUGE] ):
 
     public MHN_AI(Triple act, Game game) {
         this.act = act;
@@ -720,6 +720,7 @@ public class MHN_AI {
     private boolean isTheBallInDangerZone() {
         return ball.getPosition().getX() < DANGER_ZONE_MAX_X;
     }
+
 
     private double ratePosition(Position position) {
         return Math.sqrt(Math.pow(position.getX(), 2) + Math.pow(position.getY(), 2));
