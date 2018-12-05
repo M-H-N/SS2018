@@ -8,8 +8,8 @@ public class MHN_AI {
     protected static final int ANGLE_MIN = 0;
     protected static final float BALL_DIAMETER = 0.5f; //ORIGINAL
     //    protected static final float BALL_DIAMETER = 0.6f;
-    protected static final float PLAYER_DIAMETER = 1f; //ORIGINAL
-    //        protected static final float PLAYER_DIAMETER = 0.9f;
+//    protected static final float PLAYER_DIAMETER = 1f; //ORIGINAL
+    protected static final float PLAYER_DIAMETER = 1f;
     //        protected static final float PLAYER_DIAMETER = 1.04f;
     protected static final float INDIRECT_SHOOT_CHECK_STEP = 0.4f;
     protected static final float DIRECT_SHOOT_CHECK_STEP = 0.4f;
@@ -33,6 +33,7 @@ public class MHN_AI {
     private static final float DISTANCE_PER_100POWER = 9.183f;
     private static final float BALL_THRESHOLD_FOR_INDIRECT_DEFENCE = -6.0f;
     private static final Position RIGHT_TARGET_CENTER = new Position(TARGET_RIGHT_X, 0);
+    protected static final DirectShoot FAILED_DIRECT_SHOOT = new DirectShoot(null, FAILED_CODE, FAILED_CODE);
     protected final Triple act;
     protected final Game game;
     protected final HSide myHSide, enemyHSide;
@@ -43,9 +44,9 @@ public class MHN_AI {
     //TODO-->(DONE)  II- ADD INDIRECT OWN GOAL
     //TODO-->(DONE) III- FIND THE EXACT PLAYER DIAMETER
     //TODO-->(DONE)  IV- CHANGE THE FORMATION
-    //TODO-->         V- ADD FRACTION [HUGE] ):
-    //TODO-->        VI- OWN GOAL CLASS CLEAN WAY CHECKING HAS SOME ISSUES
-    //TODO-->       VII-
+    //TODO-->         V- ADD FRACTION [HUGE]    ):
+    //TODO-->(DONE)  VI- OWN GOAL CLASS CLEAN WAY CHECKING HAS SOME ISSUES
+    //TODO-->(DONE) VII- CHANGE TAKE THE BALL TO THE CORNER THRESHOLD
     //TODO-->        IX-
     //TODO-->         X-
     //TODO-->        XI-
@@ -59,7 +60,6 @@ public class MHN_AI {
         this.enemyHSide = HSide.RIGHT;
         printStatus();
     }
-
 
     public void action() {
         if (canMakeADirectGoal()) {
@@ -397,7 +397,7 @@ public class MHN_AI {
 //        for (int i = 0; i < PLAYERS_COUNT_IN_EACH_TEAM; i++) {
 //            ownGoal = new OwnGoal(game, game.getOppTeam().getPlayer(i), ballShootAngles);
 //            if (ownGoal.isItPossible()) {
-//                DirectShoot directShoot = ownGoal.getTheBestStrikerPlayersDirectShoots();
+//                DirectShoot directShoot = ownGoal.getTheBestStrikerPlayersDirectShoot();
 //                act.setAngle((int) Math.round(directShoot.getPlayerShootAngle()));
 //                act.setPlayerID(directShoot.getPlayer().getId());
 //                act.setPower(POWER_MAX);
@@ -409,22 +409,22 @@ public class MHN_AI {
         for (int i = 0; i < PLAYERS_COUNT_IN_EACH_TEAM; i++) {
             ownGoal = new OwnGoal(game, game.getOppTeam().getPlayer(i), ballShootAngles);
             if (!ownGoal.isItPossible()) continue;
-            ownGoalDirectShoots.add(ownGoal.getTheBestStrikerPlayersDirectShoots());
+            ownGoalDirectShoots.add(ownGoal.getTheBestStrikerPlayersDirectShoot());
         }
         DirectShoot directShoot;
         if (isIndirect) {
             for (int i = 0; i < ownGoalDirectShoots.size(); i++) {
                 directShoot = ownGoalDirectShoots.get(i);
                 if (
-                        calculateDistanceBetweenTwoPoints(directShoot.getPlayerStrikePoint(), directShoot.getPlayer().getPosition()) < OWN_GOAL_STRIKE_THRESHOLD
+                        calculateDistanceBetweenTwoPoints(directShoot.getPlayerStrikePoint(), directShoot.getPlayer().getPosition()) > OWN_GOAL_STRIKE_THRESHOLD
                                 ||
-                                calculateDistanceBetweenTwoPoints(directShoot.getPlayerStrikePoint(), ball.getPosition()) < OWN_GOAL_STRIKE_THRESHOLD
+                                calculateDistanceBetweenTwoPoints(directShoot.getPlayerStrikePoint(), ball.getPosition()) > OWN_GOAL_STRIKE_THRESHOLD
                         )
                     ownGoalDirectShoots.remove(i);
             }
         }
         if (ownGoalDirectShoots.size() == 0) return false;
-        DirectShoot finalDirectShoot = findTheNearestPlayerToTheBall(ownGoalDirectShoots);
+        DirectShoot finalDirectShoot = findTheBestDirectShoot(ownGoalDirectShoots);
         act.setAngle(getIntAngle(finalDirectShoot.getPlayerShootAngle()));
         act.setPlayerID(finalDirectShoot.getPlayer().getId());
         act.setPower(POWER_MAX);
@@ -432,7 +432,7 @@ public class MHN_AI {
     }
 
     private boolean canTakeTheBallToTheCorner() {
-        if ((ball.getPosition().getX() > 0) || (ball.getPosition().getY() < TARGET_TOP_Y && ball.getPosition().getY() > TARGET_BOTTOM_Y) || ((ball.getPosition().getX() - (BALL_DIAMETER / 2)) < TARGET_LEFT_X))
+        if ((ball.getPosition().getX() > DANGER_ZONE_MAX_X) || (ball.getPosition().getY() < TARGET_TOP_Y && ball.getPosition().getY() > TARGET_BOTTOM_Y) || ((ball.getPosition().getX() - (BALL_DIAMETER / 2)) < TARGET_LEFT_X))
             return false;
         List<DirectShoot> directShoots;
         if (ball.getPosition().getY() > TARGET_TOP_Y) {
