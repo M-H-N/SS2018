@@ -63,7 +63,7 @@ public class OwnGoal {
         final double strikerPlayerShootAngle = MHN_AI.calculateTheAngleFromTo(strikerPlayer.getPosition(), strikerPlayerStrikePoint);
         if (strikerPlayerShootAngle >= 90 && strikerPlayerShootAngle <= 270 && (playerShootAngle < 90 || playerShootAngle > 270))
             return MHN_AI.FAILED_DIRECT_SHOOT;
-        return new DirectShoot(strikerPlayer, player, strikerPlayerShootAngle, strikerPlayerShootAngle, strikerPlayerStrikePoint);
+        return new DirectShoot(strikerPlayer, player, strikerPlayerShootAngle, playerShootAngle, strikerPlayerStrikePoint);
     }
 
 
@@ -101,13 +101,13 @@ public class OwnGoal {
                 return false;
         for (int i = 0; i < MHN_AI.PLAYERS_COUNT_IN_EACH_TEAM; i++) {
             checkingPlayer = game.getMyTeam().getPlayer(i);
-            if (playerFrom != checkingPlayer && player != checkingPlayer) {
+            if (!MHN_AI.isTheSamePlayerByLocation(checkingPlayer, playerFrom) && !MHN_AI.isTheSamePlayerByLocation(checkingPlayer, player)) {
                 checkingPosition = checkingPlayer.getPosition();
                 if (!MHN_AI.isTheWayClean(playerFrom.getPosition(), destinationPoint, checkingPosition, MHN_AI.MINIMUM_COLLISION_DISTANCE_FOR_2_PLAYERS))
                     return false;
             }
             checkingPlayer = game.getOppTeam().getPlayer(i);
-            if (playerFrom != checkingPlayer && player != checkingPlayer) {
+            if (!MHN_AI.isTheSamePlayerByLocation(checkingPlayer, player) && !MHN_AI.isTheSamePlayerByLocation(checkingPlayer, playerFrom)) {
                 checkingPosition = checkingPlayer.getPosition();
                 if (!MHN_AI.isTheWayClean(playerFrom.getPosition(), destinationPoint, checkingPosition, MHN_AI.MINIMUM_COLLISION_DISTANCE_FOR_2_PLAYERS))
                     return false;

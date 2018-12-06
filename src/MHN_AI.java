@@ -8,8 +8,8 @@ public class MHN_AI {
     protected static final int ANGLE_MIN = 0;
     protected static final float BALL_DIAMETER = 0.5f; //ORIGINAL
     //    protected static final float BALL_DIAMETER = 0.6f;
-//    protected static final float PLAYER_DIAMETER = 1f; //ORIGINAL
-    protected static final float PLAYER_DIAMETER = 1f;
+    protected static final float PLAYER_DIAMETER = 1f; //ORIGINAL
+//    protected static final float PLAYER_DIAMETER = 1.1f;
     //        protected static final float PLAYER_DIAMETER = 1.04f;
     protected static final float INDIRECT_SHOOT_CHECK_STEP = 0.4f;
     protected static final float DIRECT_SHOOT_CHECK_STEP = 0.4f;
@@ -28,7 +28,8 @@ public class MHN_AI {
     protected static final float MINIMUM_COLLISION_DISTANCE_FOR_BALL_AND_PLAYER_FROM_CENTER = (BALL_DIAMETER + PLAYER_DIAMETER) / 2;
     protected static final float MINIMUM_COLLISION_DISTANCE_FOR_2_PLAYERS = PLAYER_DIAMETER;
     private static final int DANGER_ZONE_MAX_X = -5;
-    private static final float OWN_GOAL_STRIKE_THRESHOLD = 3.5f;
+    private static final int ENEMY_DANGER_ZONE_MIN_X = 5;
+    private static final float OWN_GOAL_INDIRECT_STRIKE_THRESHOLD = 3f;
     //    private static final float DISTANCE_PER_100POWER = 15.75f;
     private static final float DISTANCE_PER_100POWER = 9.183f;
     private static final float BALL_THRESHOLD_FOR_INDIRECT_DEFENCE = -6.0f;
@@ -47,9 +48,11 @@ public class MHN_AI {
     //TODO-->         V- ADD FRACTION [HUGE]    ):
     //TODO-->(DONE)  VI- OWN GOAL CLASS CLEAN WAY CHECKING HAS SOME ISSUES
     //TODO-->(DONE) VII- CHANGE TAKE THE BALL TO THE CORNER THRESHOLD
-    //TODO-->        IX-
-    //TODO-->         X-
-    //TODO-->        XI-
+    //TODO-->        IX- IN DIRECT STRIKE CHANGE PLAYER SHOOT ANGLE IF THE BALL IS SO CLOSE TO THE WALL
+    //TODO-->(DONE)   X- IF THE BALL ANGLES WITH RESPECT TO THE GOAL (ENEMY GOAL) IS IN 2 OR 3 PART JUST HIT THE BALL
+    //TODO-->(DONE)  XI- REDUCE INDIRECT OWN GOAL THRESHOLD
+    //TODO-->       XII-
+    //TODO-->       XIV-
 
 
     public MHN_AI(Triple act, Game game) {
@@ -107,9 +110,17 @@ public class MHN_AI {
 //            System.out.println("*************************CANNOT MAKE A DIRECT GOAL BECAUSE THE CLEAN ANGLES TO GOAL FROM BALL IS NULL!");
             return false;
         }
+
+        for (int i = 0; i < anglesToGoal.size(); i++) {
+            if (anglesToGoal.get(i) >= 90 && anglesToGoal.get(i) <= 270) {
+                anglesToGoal = getAnglesToGoalTargetLine();
+                break;
+            }
+        }
 //        System.out.println("ALL DIRECT SHOOT POSSIBLE ANGLES:");
 //        for (int i = 0; i < anglesToGoal.size(); i++)
 //            System.out.println("    --POSSIBLE-ANGLE:   " + anglesToGoal.get(i));
+
         List<DirectShoot> directShoots = new ArrayList<>();
 //        List<DirectShoot> directShootsAvg;
         for (int i = 0; i < anglesToGoal.size(); i++)
@@ -416,9 +427,9 @@ public class MHN_AI {
             for (int i = 0; i < ownGoalDirectShoots.size(); i++) {
                 directShoot = ownGoalDirectShoots.get(i);
                 if (
-                        calculateDistanceBetweenTwoPoints(directShoot.getPlayerStrikePoint(), directShoot.getPlayer().getPosition()) > OWN_GOAL_STRIKE_THRESHOLD
+                        calculateDistanceBetweenTwoPoints(directShoot.getPlayerStrikePoint(), directShoot.getPlayer().getPosition()) > OWN_GOAL_INDIRECT_STRIKE_THRESHOLD
                                 ||
-                                calculateDistanceBetweenTwoPoints(directShoot.getPlayerStrikePoint(), ball.getPosition()) > OWN_GOAL_STRIKE_THRESHOLD
+                                calculateDistanceBetweenTwoPoints(directShoot.getPlayerStrikePoint(), ball.getPosition()) > OWN_GOAL_INDIRECT_STRIKE_THRESHOLD
                         )
                     ownGoalDirectShoots.remove(i);
             }
@@ -446,6 +457,16 @@ public class MHN_AI {
         act.setPlayerID(directShoot.getPlayer().getId());
         act.setAngle(getIntAngle(directShoot.getPlayerShootAngle()));
         return true;
+    }
+
+    private List<Double> getAnglesToGoalTargetLine() {
+        List<Double> result = new ArrayList<>();
+        int counter = 89;
+        for (int i = 0, j = 359; counter > 0; counter--, j--, i++) {
+            result.add((double) i);
+            result.add((double) j);
+        }
+        return result;
     }
 
     protected static DirectShoot calculateTheDirectShootOfPlayerStrikingTheBallDirectlyForBallAngle(Player player, double ballAngle, Ball ball) {
@@ -844,8 +865,11 @@ public class MHN_AI {
         return false;
     }
 
-    protected boolean thresholdDirectShoot(DirectShoot directShoot) {
-        return Math.abs(directShoot.getPlayerShootAngle() - directShoot.getBallShootAngle()) < DIRECT_SHOOT_THRESHOLD_ANGLE;
+    private boolean thresholdDirectShoot(DirectShoot directShoot) {
+        return (Math.abs(directShoot.getPlayerShootAngle() - directShoot.getBallShootAngle()) < DIRECT_SHOOT_THRESHOLD_ANGLE
+                ||
+                ball.getPosition().getX() > ENEMY_DANGER_ZONE_MIN_X
+        );
     }
 
     protected List<DirectShoot> thresholdDirectShoot(List<DirectShoot> directShoots) {
@@ -1097,6 +1121,10 @@ public class MHN_AI {
             }
         }
         return chosenPlayers.get(minIndex);
+    }
+
+    protected static boolean isTheSamePlayerByLocation(Player player1, Player player2) {
+        return (player1.getPosition().getX() == player2.getPosition().getX() && player1.getPosition().getY() == player2.getPosition().getY());
     }
 
     private HSide getHSideOfTeam(Team team) {

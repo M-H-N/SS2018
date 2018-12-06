@@ -99,11 +99,13 @@ public class SuperDefence {
             playerWallStrikePoint = new Position(xWallStrikePoint, yWallStrikePoint);
             playerAngleTemp = MHN_AI.calculateTheAngleFromTo(player.getPosition(), playerWallStrikePoint);
             System.out.println("CALCULATED PLAYER ANGLE TEMP:   " + playerAngleTemp);
+            System.out.println("CALCULATED WALL STRIKE POS:     " + playerWallStrikePoint);
             if (playerAngleTemp > 180)
                 playerAngleTemp = 270 - playerAngleTemp;
             else
                 playerAngleTemp = 180 - playerAngleTemp;
             yOnTargetLine = MHN_AI.calculateTheYOnX(playerWallStrikePoint, playerAngleTemp, MHN_AI.TARGET_LEFT_X);
+            System.out.println("CALCULATED Y ON X:              " + yOnTargetLine);
             if (((yOnTargetLine + (MHN_AI.PLAYER_DIAMETER / 2)) >= TOP_TARGET_BAR_POSITION.getY()) || ((yOnTargetLine - (MHN_AI.PLAYER_DIAMETER / 2)) <= BOTTOM_TARGET_BAR_POSITION.getY()))
                 capableTotal = false;
             return;
