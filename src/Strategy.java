@@ -26,14 +26,11 @@ public class Strategy {
 //        players[4] = new Player("H. Aghili", new Position(-2, -1));
 
 
-
         players[0] = new Player("MHN-1", new Position(-1, 0));
         players[1] = new Player("MHN-2", new Position(-3, 0));
-        players[2] = new Player("MHN-3", new Position(-6.5, 1));
-        players[3] = new Player("MHN-4", new Position(-6.5, -1));
+        players[2] = new Player("MHN-3", new Position(-6.5, 0.75));
+        players[3] = new Player("MHN-4", new Position(-6.5, -0.75));
         players[4] = new Player("MHN-5", new Position(-6, 0));
-
-
 
 
         return players;

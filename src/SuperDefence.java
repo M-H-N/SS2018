@@ -17,11 +17,11 @@ public class SuperDefence {
         this.player = player;
         this.game = game;
         this.ball = game.getBall();
-        System.out.println("///////////////////[START] SUPER DEFENCE FOR PLAYER--> " + player.getId());
+//        System.out.println("///////////////////[START] SUPER DEFENCE FOR PLAYER--> " + player.getId());
         calculatePlayerWallStrikePoint();
         calculateThePlayerShootAngle();
         capable = isTheWayClean();
-        System.out.println("///////////////////[END] SUPER DEFENCE FOR PLAYER--> " + player.getId());
+//        System.out.println("///////////////////[END] SUPER DEFENCE FOR PLAYER--> " + player.getId());
     }
 
     public static SuperDefence findTheBestSuperDefence(List<SuperDefence> superDefences, Ball ball) {
@@ -82,9 +82,9 @@ public class SuperDefence {
         final Position resultPosition = new Position(xWallStrikePoint, yWallStrikePoint);
         double playerAngleTemp = MHN_AI.calculateTheAngleFromTo(player.getPosition(), resultPosition);
         double yOnTargetLine = MHN_AI.calculateTheYOnX(player.getPosition(), playerAngleTemp, MHN_AI.TARGET_LEFT_X);
-        System.out.println("CALCULATED PLAYER ANGLE TEMP:   " + playerAngleTemp);
-        System.out.println("CALCULATED Y ON X:              " + yOnTargetLine);
-        System.out.println("CALCULATED WALL STRIKE POS:     " + resultPosition.toString());
+//        System.out.println("CALCULATED PLAYER ANGLE TEMP:   " + playerAngleTemp);
+//        System.out.println("CALCULATED Y ON X:              " + yOnTargetLine);
+//        System.out.println("CALCULATED WALL STRIKE POS:     " + resultPosition.toString());
         if (distanceA < 0
                 || distanceB < 0
                 || !(
@@ -92,7 +92,7 @@ public class SuperDefence {
                         || (yOnTargetLine - (MHN_AI.PLAYER_DIAMETER / 2)) < BOTTOM_TARGET_BAR_POSITION.getY())
                 ) {
             //HERE IS THE CONDITION FOR STRIKING INSIDE OF THE TARGET...
-            System.out.println("HITTING INSIDE FOR PLAYER" + player.getId());
+//            System.out.println("HITTING INSIDE FOR PLAYER" + player.getId());
             distanceA = Math.abs(TARGET_LEFT_INNER_WALL_X - player.getPosition().getX()) - (MHN_AI.PLAYER_DIAMETER / 2);
             distanceB = Math.abs(TARGET_LEFT_INNER_WALL_X - ball.getPosition().getX()) - (MHN_AI.PLAYER_DIAMETER / 2);
             xWallStrikePoint = TARGET_LEFT_INNER_WALL_X + (MHN_AI.PLAYER_DIAMETER / 2);
@@ -100,14 +100,14 @@ public class SuperDefence {
 //            if (player.getPosition().getY() < ball.getPosition().getY()) yWallStrikePoint *= -1;
             playerWallStrikePoint = new Position(xWallStrikePoint, yWallStrikePoint);
             playerAngleTemp = MHN_AI.calculateTheAngleFromTo(player.getPosition(), playerWallStrikePoint);
-            System.out.println("CALCULATED PLAYER ANGLE TEMP:   " + playerAngleTemp);
-            System.out.println("CALCULATED WALL STRIKE POS:     " + playerWallStrikePoint);
+//            System.out.println("CALCULATED PLAYER ANGLE TEMP:   " + playerAngleTemp);
+//            System.out.println("CALCULATED WALL STRIKE POS:     " + playerWallStrikePoint);
             if (playerAngleTemp > 180)
                 playerAngleTemp = 270 - playerAngleTemp;
             else
                 playerAngleTemp = 180 - playerAngleTemp;
             yOnTargetLine = MHN_AI.calculateTheYOnX(playerWallStrikePoint, playerAngleTemp, MHN_AI.TARGET_LEFT_X);
-            System.out.println("CALCULATED Y ON X:              " + yOnTargetLine);
+//            System.out.println("CALCULATED Y ON X:              " + yOnTargetLine);
             if (((yOnTargetLine + (MHN_AI.PLAYER_DIAMETER / 2)) >= TOP_TARGET_BAR_POSITION.getY()) || ((yOnTargetLine - (MHN_AI.PLAYER_DIAMETER / 2)) <= BOTTOM_TARGET_BAR_POSITION.getY()))
                 capableTotal = false;
             return;
