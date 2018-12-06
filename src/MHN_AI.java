@@ -9,7 +9,7 @@ public class MHN_AI {
     protected static final float BALL_DIAMETER = 0.5f; //ORIGINAL
     //    protected static final float BALL_DIAMETER = 0.6f;
     protected static final float PLAYER_DIAMETER = 1f; //ORIGINAL
-//    protected static final float PLAYER_DIAMETER = 1.1f;
+    //    protected static final float PLAYER_DIAMETER = 1.1f;
     //        protected static final float PLAYER_DIAMETER = 1.04f;
     protected static final float INDIRECT_SHOOT_CHECK_STEP = 0.4f;
     protected static final float DIRECT_SHOOT_CHECK_STEP = 0.4f;
@@ -28,6 +28,7 @@ public class MHN_AI {
     protected static final float MINIMUM_COLLISION_DISTANCE_FOR_BALL_AND_PLAYER_FROM_CENTER = (BALL_DIAMETER + PLAYER_DIAMETER) / 2;
     protected static final float MINIMUM_COLLISION_DISTANCE_FOR_2_PLAYERS = PLAYER_DIAMETER;
     private static final int DANGER_ZONE_MAX_X = -5;
+    private static final int DANGER_ZONE_PLUS_MAX_X = -4;
     private static final int ENEMY_DANGER_ZONE_MIN_X = 5;
     private static final float OWN_GOAL_INDIRECT_STRIKE_THRESHOLD = 3f;
     //    private static final float DISTANCE_PER_100POWER = 15.75f;
@@ -51,7 +52,7 @@ public class MHN_AI {
     //TODO-->        IX- IN DIRECT STRIKE CHANGE PLAYER SHOOT ANGLE IF THE BALL IS SO CLOSE TO THE WALL
     //TODO-->(DONE)   X- IF THE BALL ANGLES WITH RESPECT TO THE GOAL (ENEMY GOAL) IS IN 2 OR 3 PART JUST HIT THE BALL
     //TODO-->(DONE)  XI- REDUCE INDIRECT OWN GOAL THRESHOLD
-    //TODO-->       XII-
+    //TODO-->       XII- INCREASE SUPER DEFENCE THRESHOLD
     //TODO-->       XIV-
 
 
@@ -65,6 +66,7 @@ public class MHN_AI {
     }
 
     public void action() {
+
         if (canMakeADirectGoal()) {
 //            System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!CAN-GOAL-DIRECTLY!!!!!!!!!!!!!!!!!!!!!!!!");
             return;
@@ -277,7 +279,7 @@ public class MHN_AI {
 //                break;
         }
         for (int i = 0; i < directShoots.size(); i++) { //FILTERING DIRECT_SHOOTS
-            if (directShoots.get(i).getPlayer().getPosition().getX() < FIELD_MIN_X && directShoots.get(i).getPlayerShootAngle() > 60 && directShoots.get(i).getPlayerShootAngle() < 300)
+            if ((directShoots.get(i).getPlayer().getPosition().getX() + (PLAYER_DIAMETER / 2)) < FIELD_MIN_X && directShoots.get(i).getPlayerShootAngle() > 60 && directShoots.get(i).getPlayerShootAngle() < 300)
                 directShoots.remove(i);
         }
         List<DirectShoot> directShootsClone = new ArrayList<>(directShoots);
@@ -443,7 +445,7 @@ public class MHN_AI {
     }
 
     private boolean canTakeTheBallToTheCorner() {
-        if ((ball.getPosition().getX() > DANGER_ZONE_MAX_X) || (ball.getPosition().getY() < TARGET_TOP_Y && ball.getPosition().getY() > TARGET_BOTTOM_Y) || ((ball.getPosition().getX() - (BALL_DIAMETER / 2)) < TARGET_LEFT_X))
+        if ((ball.getPosition().getX() > DANGER_ZONE_PLUS_MAX_X) || (ball.getPosition().getY() < TARGET_TOP_Y && ball.getPosition().getY() > TARGET_BOTTOM_Y) || ((ball.getPosition().getX() - (BALL_DIAMETER / 2)) < TARGET_LEFT_X))
             return false;
         List<DirectShoot> directShoots;
         if (ball.getPosition().getY() > TARGET_TOP_Y) {
@@ -451,6 +453,9 @@ public class MHN_AI {
         } else {
             directShoots = whichPlayersCanStrikeThisDirectly(270, game.getMyTeam());
         }
+        for (int i = 0; i < directShoots.size(); i++)
+            if (!(directShoots.get(i).getPlayerShootAngle() > 135 && directShoots.get(i).getPlayerShootAngle() < 225))
+                directShoots.remove(i);
         if (directShoots.size() == 0) return false;
         DirectShoot directShoot = findTheBestDirectShoot(directShoots);
         act.setPower(getPowerByDistance(calculateDistanceBetweenTwoPoints(directShoot.getPlayer().getPosition(), ball.getPosition())));

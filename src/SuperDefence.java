@@ -78,6 +78,7 @@ public class SuperDefence {
         double distanceB = Math.abs(MHN_AI.FIELD_MIN_X - ball.getPosition().getX()) - (MHN_AI.PLAYER_DIAMETER / 2);
         double xWallStrikePoint = MHN_AI.FIELD_MIN_X + (MHN_AI.PLAYER_DIAMETER / 2);
         double yWallStrikePoint = ((player.getPosition().getY() * distanceB) + (ball.getPosition().getY() * distanceA)) / (distanceA + distanceB);
+        if (player.getPosition().getY() < ball.getPosition().getY()) yWallStrikePoint *= -1;
         final Position resultPosition = new Position(xWallStrikePoint, yWallStrikePoint);
         double playerAngleTemp = MHN_AI.calculateTheAngleFromTo(player.getPosition(), resultPosition);
         double yOnTargetLine = MHN_AI.calculateTheYOnX(player.getPosition(), playerAngleTemp, MHN_AI.TARGET_LEFT_X);
@@ -96,6 +97,7 @@ public class SuperDefence {
             distanceB = Math.abs(TARGET_LEFT_INNER_WALL_X - ball.getPosition().getX()) - (MHN_AI.PLAYER_DIAMETER / 2);
             xWallStrikePoint = TARGET_LEFT_INNER_WALL_X + (MHN_AI.PLAYER_DIAMETER / 2);
             yWallStrikePoint = ((player.getPosition().getY() * distanceB) + (ball.getPosition().getY() * distanceA)) / (distanceA + distanceB);
+            if (player.getPosition().getY() < ball.getPosition().getY()) yWallStrikePoint *= -1;
             playerWallStrikePoint = new Position(xWallStrikePoint, yWallStrikePoint);
             playerAngleTemp = MHN_AI.calculateTheAngleFromTo(player.getPosition(), playerWallStrikePoint);
             System.out.println("CALCULATED PLAYER ANGLE TEMP:   " + playerAngleTemp);
