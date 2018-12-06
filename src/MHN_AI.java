@@ -28,7 +28,7 @@ public class MHN_AI {
     protected static final float MINIMUM_COLLISION_DISTANCE_FOR_BALL_AND_PLAYER_FROM_CENTER = (BALL_DIAMETER + PLAYER_DIAMETER) / 2;
     protected static final float MINIMUM_COLLISION_DISTANCE_FOR_2_PLAYERS = PLAYER_DIAMETER;
     private static final int DANGER_ZONE_MAX_X = -5;
-    private static final int DANGER_ZONE_PLUS_MAX_X = -4;
+    private static final float DANGER_ZONE_PLUS_MAX_X = -3.5f;
     private static final int ENEMY_DANGER_ZONE_MIN_X = 5;
     private static final float OWN_GOAL_INDIRECT_STRIKE_THRESHOLD = 3f;
     //    private static final float DISTANCE_PER_100POWER = 15.75f;
@@ -307,7 +307,7 @@ public class MHN_AI {
 //            playerId = indirectStrike.getPlayer().getId();
 //            System.out.println("SELECTED INDIRECT SHOOT FOR TAKING THE BALL AWAY :\n" + indirectStrike.toString());
 //            System.out.println("THERE IS NOT PLAYER TO TAKE THE BALL AWAY DIRECTLY!");
-            if (ball.getPosition().getX() < MHN_AI.DANGER_ZONE_MAX_X) {
+            if (ball.getPosition().getX() < MHN_AI.DANGER_ZONE_PLUS_MAX_X) {
                 System.out.println("||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||TRYING TO DO A SUPER DEFENCE||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||");
                 SuperDefence superDefence;
                 List<SuperDefence> superDefences = new ArrayList<>();
@@ -705,7 +705,6 @@ public class MHN_AI {
         }
         System.out.println("===================================================================================================================");
     }
-
 
     private Player findOneDefencePlayer(Team team) {
         Player player = null, tempPlayer;
